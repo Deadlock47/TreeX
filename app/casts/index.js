@@ -59,7 +59,7 @@ const index = () => {
           <RefreshControl refreshing={refreshing} onRefresh={get_Actress_list} />
         }
       >
-        <View className='flex-row flex-wrap gap-2 justify-start items-center'>
+        <View className='flex-row flex-wrap gap-2 mb-10 justify-start items-center'>
 
         {
           actress_list.map((item,index)=><Actress_Item key={index} item={item} ></Actress_Item>)

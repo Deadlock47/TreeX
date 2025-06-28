@@ -8,12 +8,24 @@ import { router } from 'expo-router';
 // Expo SQLite
 import { Storage } from 'expo-sqlite/kv-store';
 
+// Expo Fonts
+import { useFonts } from 'expo-font';
+import { Inter_900Black } from '@expo-google-fonts/inter';
+import { Roboto_400Regular } from '@expo-google-fonts/roboto';
+import { Nunito_400Regular, Nunito_700Bold } from '@expo-google-fonts/nunito';
 // Axios
 import axios from 'axios';
+import get_data from './data_fetch';
 
 const Item = ({code,thumb}) => {
     const code_vid = code;
     // const thumb = thumb;
+    let [fontsLoaded] = useFonts({
+              Inter_900Black,
+              Roboto_400Regular,
+              Nunito_400Regular,
+              Nunito_700Bold
+            });
     let code_final = code_vid;
     // console.log(code_final);
     if(code_final.includes('-') || code_final.includes(' '))
@@ -170,9 +182,9 @@ async function store_each_tag(newTags) {
             }
             else{
                 console.log("Data not Found Calling api..")
-                const response = await axios.get(`https://rn-jv.mytyper.workers.dev/code/${lowerCode}`);
+                const response = await get_data(lowerCode);
                 console.log(response.data ? true : false);
-                const result = response.data;
+                const result = response;
                 console.log(result)
                 const jsonify_result = JSON.stringify(result);
                 console.log(jsonify_result)
@@ -236,13 +248,13 @@ async function store_each_tag(newTags) {
     //  loading ? (<Text>Loading...........</Text>)
     //     :
         
-        <Pressable className={`${thumb ? 'w-[calc(48%)]' : 'w-full'} rounded-lg overflow-hidden bg-black h-auto mb-4 `} >
+        <Pressable className={`${'w-full'} rounded-lg overflow-hidden bg-black h-auto mb-4 `} >
             {  
 
             
               thumb ?
                 (
-                    <View className="w-fit rounded-t-xl overflow-hidden h-fit p-1">
+                    <View className="w-fit rounded-t-xl overflow-hidden h-fit p-1 " >
                     { loading ? 
                         <View>
                             <View className="flex items-center justify-center w-full h-72 bg-gray-800 rounded sm:w-96 dark:bg-gray-700">
@@ -255,9 +267,15 @@ async function store_each_tag(newTags) {
                             <Text style={{'color':'white'}} numberOfLines={2} className="p-1 font-bold ">NA : {code}</Text>
                         </View>
                         : 
-                        <View onTouchEnd={()=>{ router.push(`/code/${code}`) }}>
-                            <Image className=" rounded-t-xl " width={'auto'} height={248} resizeMode='contain' source={{uri : data?.poster_thumb }} ></Image>
-                            <Text style={{'color':'white'}} numberOfLines={2} className="p-1 font-bold ">{data?.id}  {data?.title?.length && data?.title }</Text>
+                        <View className='flex flex-row' onTouchEnd={()=>{ router.push(`/code/${code}`) }}>
+                            <View className="w-[calc(30%)] h-fit rounded-t-xl overflow-hidden">
+                                <Image className="  "  width={'auto'} height={150} resizeMode='contain' source={{uri : data?.poster_thumb }} ></Image>
+                            </View>
+                            <View className="flex-1 h-fit p-2 justify-center items-start">
+                                <Text style={{fontFamily: 'Nunito_700Bold', fontSize: 14,'color':'black'}}  className="p-0.5 pl-1 pr-1 ml-1 rounded-lg font-bold bg-white ">{data?.id}</Text>
+                                <Text style={{fontFamily: 'Roboto_400Regular', fontSize: 14,'color':'white'}} numberOfLines={3} className="p-1 ">{data?.title?.length ? data?.title : "No Title" }</Text>
+                                <Text style={{fontFamily: 'Nunito_400Regular', fontSize: 14,'color':'white'}} className="p-1 underline ">{data?.details?.studio}</Text>
+                            </View>
                         </View>
                      }   
                     </View>
@@ -273,17 +291,17 @@ async function store_each_tag(newTags) {
                 noresult ?
                 (
                     <View className='flex justify-center items-center' >
-                        <View className='p-1 flex-row justify-between  w-10 h-10 z-10 left-11  ' 
+                        <View className=' flex-row justify-between p-2  w-full z-10   ' 
                             
                         >
-                            <Text className='text-white bg-yellow-500 p-1 rounded-md ' 
+                            <Text className='text-white bg-red-500 p-1 rounded-md ' 
                             onTouchEnd={
                                 ()=>{
                                     get_video_data(lowerCode);
                                 }
                             }
                             >Reload</Text>
-                            <Text className='text-white  bg-yellow-500 p-1 rounded-md ' 
+                            <Text className='text-white  bg-red-500 p-1 rounded-md ' 
                             onTouchEnd={
                                 ()=>{
                                     remove_code_from_list(code);
@@ -294,15 +312,18 @@ async function store_each_tag(newTags) {
 
                         </View>
                         <Image className=" rounded-t-xl " width={30} height={20} resizeMode='cover' source={require('../assets/nores-removebg-preview.png')} ></Image>
-                        <Text style={{'color':'white'}} numberOfLines={2} className="p-1 font-bold ">NA : {code}</Text>
+                        <Text style={{'color':'white'}} numberOfLines={2} className="p-1 font-bold ">N/A : {code}</Text>
                     </View>
                 ):
                 (
-                    <View onTouchEnd={()=>{ router.push(`/code/${code}`) }} className="w-fit rounded-t-xl overflow-hidden h-fit p-1 " >
-                        
+                    <View onTouchEnd={()=>{ router.push(`/code/${code}`) }} className="w-fit rounded-t-xl overflow-hidden h-fit  " >
+        
                         <Image className=" rounded-t-xl " width={'auto'} height={248} resizeMode='contain' source={{uri : data?.poster}} ></Image>
-                        <Text numberOfLines={2} style={{'color':'white'}} className="p-1 font-bold ">{data?.id}  {data?.title?.length && data?.title }</Text>
-                    </View>)
+                        <Text numberOfLines={2} style={{fontFamily: 'Nunito_700Bold','color':'white'}} className="p-2 pb-0">{data?.id}</Text>
+                        <Text numberOfLines={2} style={{fontFamily: 'Roboto_400Regular','color':'white'}} className="p-3">{data?.title?.length && data?.title }</Text>
+                        
+                    </View>
+                )
                 )
             }
             

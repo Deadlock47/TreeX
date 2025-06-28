@@ -46,7 +46,7 @@ const Tag = () => {
                   }}
                   className='' >
                     <View
-                      className='bg-yellow-500 w-fit h-fit ml-1 p-1  rounded-md '
+                      className='bg-red-500 w-fit h-fit ml-1 p-1  rounded-md '
                     >
 
                 <Text className='' > 

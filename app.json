@@ -10,7 +10,6 @@
       "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
-   
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -34,10 +33,11 @@
       }
     },
     "runtimeVersion": "1.0.0i",
-    
     "plugins": [
       "expo-router",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-video",
+      "expo-font"
     ],
     "owner": "deadlock0001"
   }

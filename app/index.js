@@ -1,33 +1,21 @@
-// React and React Native
+
 import { View, Text, ScrollView, Image, Switch, RefreshControl, Alert, ToastAndroid } from 'react-native';
 import React, { useEffect, useState } from 'react';
-
-// Expo Router
 import { Link, router } from 'expo-router';
-
-// Expo SQLite
 import { Storage } from 'expo-sqlite/kv-store';
-
-// Expo Clipboard
 import * as Clipboard from 'expo-clipboard';
-
-// Status Bar
 import { StatusBar } from 'expo-status-bar';
-
-// Safe Area
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-
-// Icons
 import Entypo from '@expo/vector-icons/Entypo';
 import Feather from '@expo/vector-icons/Feather';
 
-// Components
 import Item from '../components/item';
 
 const index = () => {
     const [jav_list , setJav_list] = useState([]);
     const [refreshing,setRefreshing] = useState(true);
-
+    const [isSwitchEnabled, setIsSwitchEnabled] = useState(false);
+    const [isThumbT, setIsThumbT] = useState(false);
     async function refresh_data()
     {
       const result = await Storage.getItem("code_list");
@@ -85,7 +73,7 @@ const index = () => {
                   ],
 
                 )
-            }} className="bg-[#b28300] rounded-2xl p-1" name="menu" size={40} color="white" />
+            }} className="bg-[#ca9401] rounded-2xl p-1" name="menu" size={40} color="white" />
             <Feather onPress={()=>{
                 router.push("/searchScreen")
             }} name="search" size={34} color="white" className="bg-[#ca9401] rounded-2xl p-2" />
@@ -99,37 +87,30 @@ const index = () => {
                 <Text className='text-white  '>Change layout</Text>
                 <Switch trackColor={{false: '#767577', true: '#81b0ff'}}
           // thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setIsSwitchEnabled(previousState => !previousState);
+                console.log(isSwitchEnabled)
+                setIsThumbT(!isSwitchEnabled);
+              }}
+              value={isSwitchEnabled}
            className='w-fit text-white h-fit'></Switch>
               </View>
 
           </View>
-          <View className='flex justify-end pl-3 pt-2 w-screen '>
+          {/* <View className='flex justify-end pl-3 pt-2 w-screen '>
             <View className='' >
               <Text className='text-neutral-300 p-1' >Results : {jav_list.length-1}</Text>
             </View>
-          </View>
+          </View> */}
           <ScrollView className = "w-screen p-2  h-fit "
               refreshControl={<RefreshControl refreshing={refreshing} onRefresh={get_jav_lists} ></RefreshControl>}
             
           >
-              
-                {/* 
-                 
-                 
-                 
-                 <Item code={'IPX-201'}></Item> */}
-
-                 {/* <Item  code={'IPX-169'}></Item>
-                 <Item code={'IPX-222'}></Item>
-                 <Item code={'EBOD-875'}></Item>
-
-                <Item code={'IPX-201'}></Item>
-                */}
-                {/* <Item code={'R170'}></Item> */}
-                
-                {
-                  jav_list.map((item,index)=>item !== "" && <Item code={item} key={index} thumb_t={false} ></Item>)
+             {
+                  jav_list.map((item,index)=>item !== "" && <Item code={item} key={index} thumb={isThumbT} ></Item>)
                 }
+                {/* <Item code={'start255'}></Item> */}
                 <View className='mb-16' ></View>
           </ScrollView>
 

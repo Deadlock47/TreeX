@@ -5,9 +5,9 @@ import '../global.css'
 import Feather from '@expo/vector-icons/Feather';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { SQLiteProvider } from 'expo-sqlite';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const _layout = () => {
