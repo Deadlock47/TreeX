@@ -41,6 +41,9 @@ yarn-error.log
 *.xcscmblueprint
 xcuserdata
 
+/android 
+/ios
+
 # IDEA / Android Studio
 *.iml
 .gradle
