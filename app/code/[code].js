@@ -13,7 +13,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import ImageView from 'react-native-image-viewing';
+// import ImageView from 'react-native-image-viewing';
 import BottomPlaylistDrawer from './bottomDrawer';
 import { StatusBar } from 'expo-status-bar';
 import { PlayList_Add } from '../../components/playlistAdd';
@@ -312,6 +312,7 @@ const Code = () => {
                 </Pressable>
               ))}
           </View>
+          { /*
           {data?.screenshots && (
             <ImageView
               images={data.screenshots.map((item) => {
@@ -335,8 +336,9 @@ const Code = () => {
               }}
               visible={visible}
               onRequestClose={() => setVisible(false)}
-            />
-          )}
+              />
+            )}
+            */ }
         </View>
         <View className="w-screen h-fit mb-10">
           <Text className="text-neutral-200 text-xl pl-5">Trailer:</Text>
