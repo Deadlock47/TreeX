@@ -15,7 +15,7 @@
     "@expo-google-fonts/source-sans-pro": "^0.2.3",
     "@gorhom/bottom-sheet": "^5.0.6",
     "axios": "^1.7.9",
-    "expo": "53.0.20",
+    "expo": "^53.0.20",
     "expo-clipboard": "~7.1.5",
     "expo-constants": "~17.1.6",
     "expo-font": "~13.3.1",
