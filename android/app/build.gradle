@@ -153,6 +153,9 @@ dependencies {
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
     def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";
+    
+    def kspVersion = "1.9.24-1.0.20" // match Kotlin version
+    implementation "com.google.devtools.ksp:symbol-processing-api:$kspVersion"
 
     if (isGifEnabled) {
         // For animated gif support
