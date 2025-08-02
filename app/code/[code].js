@@ -7,7 +7,7 @@ import { useFonts } from 'expo-font';
 import { Inter_900Black } from '@expo-google-fonts/inter';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { Nunito_400Regular } from '@expo-google-fonts/nunito';
-import VideoScreen from './player';
+// import VideoScreen from './player';
 import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
