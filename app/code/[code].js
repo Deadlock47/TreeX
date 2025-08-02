@@ -342,7 +342,7 @@ const Code = () => {
         </View>
         <View className="w-screen h-fit mb-10">
           <Text className="text-neutral-200 text-xl pl-5">Trailer:</Text>
-          <View>{data?.preview && <VideoScreen video_url={data?.preview}></VideoScreen>}</View>
+          {/* <View>{data?.preview && <VideoScreen video_url={data?.preview}></VideoScreen>}</View> */}
         </View>
         </ScrollView>
       </View>
