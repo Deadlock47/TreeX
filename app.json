@@ -17,6 +17,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.deadlock0001.treex"
     },
+    "androidNavigationBar": {
+      "visible": "immersive"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

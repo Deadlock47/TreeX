@@ -12,9 +12,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+// import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 // import ImageView from 'react-native-image-viewing';
-import BottomPlaylistDrawer from './bottomDrawer';
+// import BottomPlaylistDrawer from './bottomDrawer';
 import { StatusBar } from 'expo-status-bar';
 import { PlayList_Add } from '../../components/playlistAdd';
 

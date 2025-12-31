@@ -43,7 +43,7 @@ const _layout = () => {
           },
           tabBarItemStyle:{
             marginTop:8,
-            borderRadius:32,
+            borderRadius:28,
             
           }
           
