@@ -24,7 +24,7 @@ const index = () => {
     const result = await Storage.getItem("actress_list")
     // console.log(result)
     let res = result.split(',');
-    sorted_res = res.sort((a,b)=>{
+    let sorted_res = res.sort((a,b)=>{
       let nameA = a.toUpperCase();    
       let nameB = b.toUpperCase();
       if (nameA < nameB) {
