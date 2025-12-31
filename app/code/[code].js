@@ -136,7 +136,7 @@ const Code = () => {
         <View className={`${showPlaylistBox ? "" :'hidden'} absolute z-30 w-[calc(90%)] rounded-lg h-[calc(80%)] bg-neutral-800`} >
           <View className='flex-row p-4 justify-between' >
             <Text className='text-white' style={{fontFamily: 'Nunito_700Bold', fontSize: 26}} >Playlist</Text>
-            <Pressable onTouchEnd={()=>setShowPlaylistBox(!showPlaylistBox)} className="rounded-xl bg-red-500 p-2  mb-3">
+            <Pressable onTouchEnd={()=>setShowPlaylistBox(!showPlaylistBox)} className="rounded-xl bg-yellow-500 p-2  mb-3">
               <Text className="text-center text-white">
                 <Entypo name="cross" size={26} color="white" />
               </Text>
@@ -173,7 +173,7 @@ const Code = () => {
               set_Favs(code)
               // console.log("set_favs")
             }}
-            className="bg-red-500 flex justify-center items-center p-2 top-[calc(240px)] rounded-full"
+            className="bg-yellow-500 flex justify-center items-center p-2 top-[calc(240px)] rounded-full"
           >
             <View className=''>
 
@@ -242,7 +242,7 @@ const Code = () => {
           </View>
         </View>
         <View className="px-5 mt-4">
-          <Pressable className="p-3 bg-red-700 rounded-xl" onTouchEnd={()=>setShowPlaylistBox(!showPlaylistBox)}>
+          <Pressable className="p-3 bg-yellow-700 rounded-xl" onTouchEnd={()=>setShowPlaylistBox(!showPlaylistBox)}>
             <Text className="text-white text-center">Add to Playlist</Text>
           </Pressable>
         </View>
@@ -259,7 +259,7 @@ const Code = () => {
                   }}
                   key={tag.tag_id}
                 >
-                  <Text className="w-fit bg-red-700 p-2 h-fit pt-2.5 pb-2.5 text-neutral-200" key={tag.tag_id}>
+                  <Text className="w-fit bg-yellow-700 p-2 h-fit pt-2.5 pb-2.5 text-neutral-200" key={tag.tag_id}>
                     {tag.name}
                   </Text>
                 </Pressable>
@@ -306,7 +306,7 @@ const Code = () => {
                     setVisible(true);
                   }}
                   key={key}
-                  className="bg-red-400"
+                  className="bg-yellow-400"
                 >
                   <Image width={100} height={100} contentFit="cover" source={{ uri: item }}></Image>
                 </Pressable>

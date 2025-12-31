@@ -294,14 +294,14 @@ async function store_each_tag(newTags) {
                         <View className=' flex-row justify-between p-2  w-full z-10   ' 
                             
                         >
-                            <Text className='text-white bg-red-500 p-1 rounded-md ' 
+                            <Text className='text-white bg-yellow-500 p-1 rounded-md ' 
                             onTouchEnd={
                                 ()=>{
                                     get_video_data(lowerCode);
                                 }
                             }
                             >Reload</Text>
-                            <Text className='text-white  bg-red-500 p-1 rounded-md ' 
+                            <Text className='text-white  bg-yellow-500 p-1 rounded-md ' 
                             onTouchEnd={
                                 ()=>{
                                     remove_code_from_list(code);
@@ -319,8 +319,11 @@ async function store_each_tag(newTags) {
                     <View onTouchEnd={()=>{ router.push(`/code/${code}`) }} className="w-fit rounded-t-xl overflow-hidden h-fit  " >
         
                         <Image className=" rounded-t-xl " width={'auto'} height={248} resizeMode='contain' source={{uri : data?.poster}} ></Image>
-                        <Text numberOfLines={2} style={{fontFamily: 'Nunito_700Bold','color':'white'}} className="p-2 pb-0">{data?.id}</Text>
-                        <Text numberOfLines={2} style={{fontFamily: 'Roboto_400Regular','color':'white'}} className="p-3">{data?.title?.length && data?.title }</Text>
+                        <Text numberOfLines={2} style={{fontFamily: 'Nunito_700Bold','color':'white'}} className="p-2 pb-0">
+                            {data?.id}
+                                                    <Text numberOfLines={2} style={{fontFamily: 'Roboto_400Regular','color':'white'}} className="p-3"> | {data?.title?.length && data?.title }</Text>
+                        </Text>
+
                         
                     </View>
                 )

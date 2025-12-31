@@ -51,7 +51,7 @@ const index = () => {
               onTouchEnd={()=>{
                 router.back();
               }}
-              className='bg-red-500 ml-1 p-1  rounded-md ' >
+              className='bg-yellow-500 ml-1 p-1  rounded-md ' >
             <Text className='' > 
                 <Ionicons name="chevron-back" size={30} color="black" />
             </Text>
@@ -88,7 +88,7 @@ const index = () => {
                   ]
                 )
               }}
-              className='bg-red-500 ml-1 p-1  rounded-md ' >
+              className='bg-yellow-500 ml-1 p-1  rounded-md ' >
             <Text className='' > 
             <MaterialCommunityIcons name="delete" size={30} color="black" />
             </Text>

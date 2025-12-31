@@ -73,7 +73,7 @@ const Actress_Info = () => {
                 router.back();
                 // console.log("btn - pressed")
               }}
-              className='bg-red-500 p-1  rounded-md ' >
+              className='bg-yellow-500 p-1  rounded-md ' >
               <Text className='' > 
                   <Ionicons name="chevron-back" size={30} color="black" />
               </Text>

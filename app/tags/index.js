@@ -114,7 +114,7 @@ const fetchTags = async () => {
           
           return (
           <Pressable onTouchEnd={()=>{ router.push({pathname : `/tags/${tag.tag_id}`,params : {tag_name : tag.name}}) }} key={tag.tag_id} className='' >
-            <Text className='w-fit bg-red-700 p-2 h-fit pt-2.5 pb-2.5 text-neutral-200 ' key={tag.tag_id}>{tag.name}</Text>
+            <Text className='w-fit bg-yellow-700 p-2 h-fit pt-2.5 pb-2.5 text-neutral-200 ' key={tag.tag_id}>{tag.name}</Text>
           </Pressable>
           )
               }

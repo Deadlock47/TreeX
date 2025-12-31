@@ -1,20 +1,10 @@
 // React and React Native
 import { View, Text, ScrollView, Dimensions, Image, Pressable, RefreshControl } from 'react-native';
 import React, { useEffect, useState } from 'react';
-
-// Expo Router
 import { router } from 'expo-router';
-
-// Expo SQLite
 import { Storage } from 'expo-sqlite/kv-store';
-
-// Expo Fonts
 import { Nunito_400Regular, useFonts } from '@expo-google-fonts/nunito';
-
-// Safe Area
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// Status Bar
 import { StatusBar } from 'expo-status-bar';
 
 let { width, height } = Dimensions.get('window');
@@ -34,7 +24,18 @@ const index = () => {
     const result = await Storage.getItem("actress_list")
     // console.log(result)
     let res = result.split(',');
-    setActress_list(res);
+    sorted_res = res.sort((a,b)=>{
+      let nameA = a.toUpperCase();    
+      let nameB = b.toUpperCase();
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    });
+    setActress_list(sorted_res);
     setRefreshing(false);
   }
   useEffect(()=>{
@@ -47,13 +48,13 @@ const index = () => {
     <SafeAreaView className=" bg-neutral-900 w-screen h-full" >
       <StatusBar style='auto' ></StatusBar>
       <View className='h-16 mt-2 w-screen' >
-                <Text className='text-white text-center  ' style={{fontFamily: 'Nunito_700Bold', fontSize: 30}}>Actress</Text>
+                <Text className='text-white text-center' style={{fontFamily: 'Nunito_700Bold', fontSize: 30}}>Actress</Text>
       </View>
       
       { 
       actress_list.length > 0 && 
       <ScrollView
-        className='p-5 w-full h-auto pb-10  bg-neutral-900   '
+        className='p-5 w-full h-auto mb-safe-or-16  bg-neutral-900   '
         
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={get_Actress_list} />
@@ -91,19 +92,22 @@ const Actress_Item= (props)=>{
     get_actress_data(txt);
   },[])
   return (
-
+    
     <Pressable 
         onTouchEnd={()=>{
           router.push({pathname : `/casts/${txt}`,params :{image : data.image , name : data.name}})
         }}
-        className=' p-2 mt-3   flex '
+        className=' p-1 flex '
         width={width * 0.29}
         height = {height * 0.19}
     >
-      <View className=' p-1 h-fit   flex justify-center items-center  rounded-lg overflow-hidden ' >
+      <View className='h-fit   flex justify-center items-center rounded-xl  overflow-hidden ' >
         {
           data?.image &&
-          <Image width={90} height={90}  source={{uri : data?.image}} ></Image>
+          <View className=' rounded-xl overflow-hidden ' > 
+
+            <Image width={90} height={90}  source={{uri : data?.image}} ></Image>
+          </View>
           // <Image width={90} height={90}  source={require("../../assets/no_image_actress.jpg")} ></Image>
 
         }

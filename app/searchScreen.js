@@ -110,7 +110,7 @@ const search = () => {
           <View className=' absolute top-32 flex gap-3  bg-black w-[calc(90%)] m-6 z-20 h-auto p-4 '  >
             <View className=' flex items-end w-fit' >
               <View onTouchEnd={()=>setBulk(false)} className='w-fit h-fit' >
-                <Text className='text-white w-fit text-3xl px-2 pb-1 rounded-md h-fit text-center bg-red-700' >x</Text>
+                <Text className='text-white w-fit text-3xl px-2 pb-1 rounded-md h-fit text-center bg-yellow-700' >x</Text>
               </View>
             </View>
             {
@@ -154,7 +154,7 @@ const search = () => {
               }
               // 2 is loading
             }} >
-              <Text className='text-white rounded-xl p-3 text-center bg-red-700 ' >Add To Database {finalBulkValue.length > 0 && finalBulkValue.split(',').length }</Text>
+              <Text className='text-white rounded-xl p-3 text-center bg-yellow-700 ' >Add To Database {finalBulkValue.length > 0 && finalBulkValue.split(',').length }</Text>
             </Pressable>
         </View>
         }
