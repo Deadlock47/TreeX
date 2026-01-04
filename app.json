@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TreeX",
-    "slug": "treex",
+    "slug": "jvv",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -33,8 +33,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "89bebd7a-05e8-4395-85f1-b4e8cc2f242e"
-      }
+        "projectId": "58185ebe-ef72-45ef-9362-f23789719786"
+      },
+      "router": {}
     },
     "runtimeVersion": "1.0.0i",
     "plugins": [
