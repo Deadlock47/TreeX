@@ -301,9 +301,10 @@ const Code = () => {
               data.screenshots.map((item, key) => (
                 <Pressable
                   onTouchEnd={() => {
-                    setImageIdx(key);
+                    // setImageIdx(key);
                     setCurrentIndex(key);
                     setVisible(true);
+                    // console.log(key ,imageIdx,currentIndex);
                   }}
                   key={key}
                   className="bg-yellow-400"
@@ -315,16 +316,22 @@ const Code = () => {
       
           {data?.screenshots && (
             <ImageView
+            style={{
+              flex: 1,
+              height: '100%',
+              width: '100%',
+            }}
               images={data.screenshots.map((item) => {
                 const url_item = item.includes('jp-') ? item : item.replace('-', 'jp-');
                 console.log(url_item);
+                console.log( imageIdx,currentIndex);
                 return {
                   uri: url_item,
                 };
               })}
               imageIndex={currentIndex}
-              onImageIndexChange={(index) => setImageIdx(index)}
-              HeaderComponent={() => {
+              onImageIndexChange={(index) =>{ setImageIdx(index)}}
+              HeaderComponent={(onRequestClose) => {
                 return (
                   <View className="h-16 bg-transparent w-full flex-row items-center justify-center">
                     <View className="w-fit mt-1">
@@ -332,9 +339,14 @@ const Code = () => {
                         data?.screenshots ? data.screenshots.length : 0
                       }`}</Text>
                     </View>
+                    <Pressable onTouchEndCapture={()=> {setVisible(false)}} className="absolute right-1 top-5 bg-white  p-2 opacity-60">
+                      <Text color="white">X</Text>
+                    </Pressable>
                   </View>
                 );
               }}
+              // swipeToCloseEnabled = 'true'
+              doubleTapToZoomEnabled = 'true'
               visible={visible}
               onRequestClose={() => setVisible(false)}
               />
