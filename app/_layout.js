@@ -29,16 +29,16 @@ const _layout = () => {
       <Tabs screenOptions={({route})=>({
         tabBarShowLabel : false,
           tabBarStyle:{
-            backgroundColor : 'rgba(250, 250, 250, 0.9)',
-            height : 55,
-            marginLeft:10,
-            marginRight:10,
-            borderRadius: 16,
+            backgroundColor : 'rgba(250, 250, 250, 1)',
+            height : 65,
+            marginLeft:0,
+            marginRight:0,
+            borderRadius: 0,
             elevation:0,
-            bottom:15,
+            bottom:0,
             position:'absolute',
-            left:20,
-            right:20,
+            left:0,
+            right:0,
             display: route.name === 'code' ? 'none' : 'flex'
           },
           tabBarItemStyle:{
@@ -65,8 +65,8 @@ const _layout = () => {
               <View>
                 {
                   focused ? 
-                  <MaterialIcons name="home-filled" size={24} color={focusedColor} /> : 
-                  <Feather name="home" size={24} color="black" /> 
+                  <MaterialIcons name="home-filled" size={26} color={focusedColor} /> : 
+                  <Feather name="home" size={26} color="black" /> 
                 }
               </View>
               <Text style={{
@@ -95,8 +95,8 @@ const _layout = () => {
               <View>
                 {
                   focused ? 
-                  <FontAwesome name="search" size={24} color={focusedColor} /> : 
-                  <FontAwesome name="search" size={24} color="black" /> 
+                  <FontAwesome name="search" size={26} color={focusedColor} /> : 
+                  <FontAwesome name="search" size={26} color="black" /> 
                 }
               </View>
               <Text style={{
@@ -124,8 +124,8 @@ const _layout = () => {
               <View>
                 {
                   focused ? 
-                  <Feather name="list" size={24} color={focusedColor} /> : 
-                  <Feather name="list" size={24} color="black" />
+                  <Feather name="list" size={26} color={focusedColor} /> : 
+                  <Feather name="list" size={26} color="black" />
                 }
               </View>
               <Text style={{
@@ -154,8 +154,8 @@ const _layout = () => {
               <View>
                 {
                   focused ? 
-                  <FontAwesome5 name="hashtag" size={24} color={focusedColor} /> : 
-                  <FontAwesome5 name="hashtag" size={24} color="black" />
+                  <FontAwesome5 name="hashtag" size={26} color={focusedColor} /> : 
+                  <FontAwesome5 name="hashtag" size={26} color="black" />
                 }
               </View>
               <Text style={{

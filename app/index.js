@@ -46,13 +46,12 @@ const index = () => {
       get_jav_lists();
     },[])
   return (
-    <SafeAreaProvider className='h-full bg-neutral-700'>
-      <SafeAreaView className=" bg-neutral-900 w-screen h-full" >
-          <StatusBar  ></StatusBar>
+     <SafeAreaProvider className='h-full bg-neutral-700'>
+      <View className=" bg-neutral-900 w-screen h-screen" >
+          <StatusBar hidden={true} translucent={true} ></StatusBar>
           <View className="flex-row items-center justify-between py-4 px-3   " >
             <Entypo onPress={()=>{
-                // refresh_data();
-                // router.replace("/")
+       
                 Alert.alert("Refresh","Are you sure you want to refresh the data?",
                   [
                     {
@@ -111,10 +110,10 @@ const index = () => {
                   jav_list.map((item,index)=>item !== "" && <Item code={item} key={index} thumb={isThumbT} ></Item>)
                 }
                 {/* <Item code={'start255'}></Item> */}
-                <View className='mb-16' ></View>
+                <View className='mb-10' ></View>
           </ScrollView>
 
-      </SafeAreaView>
+      </View>
     </SafeAreaProvider>
   )
 }
