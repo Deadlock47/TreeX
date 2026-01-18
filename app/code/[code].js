@@ -27,7 +27,6 @@ const Code = () => {
     Nunito_400Regular,
   });
 
-  const snapPoints = useMemo(() => ['80%'], []);
   const { code } = useLocalSearchParams();
   const bottomSheetRef = useRef(null);
 
@@ -45,13 +44,32 @@ const Code = () => {
   const handleClosePress = () => bottomSheetRef.current?.close();
   const handleOpenPress = () => bottomSheetRef.current?.expand();
 
+
+      async function set_Playlist(txt) {
+          try {
+              const arr = await Storage.getItem('playlist');
+              // console.log('ffgfgfgfdgf', txt);
+              let nw = arr.split(',');
+              // console.log(nw);
+              if (!nw.includes(txt)) {
+              nw = [...nw, txt];
+              }
+  
+              await Storage.setItem('playlist', nw.join(','));
+              ToastAndroid.show('Playlist Updated ✔️', ToastAndroid.SHORT);
+              get_playlist();
+          } catch (error) {
+              // console.log(error);
+          }
+      }
+
     async function set_Favs(code){
       try {
         
         const result = await Storage.getItem('Favourite');
         let arr = result.split(',');
-          // console.log(arr)
-          // console.log("first",code)
+          // // console.log(arr)
+          // // console.log("first",code)
           if (isFav) {
             arr = arr.filter((item) => item !== code);
             await Storage.setItem('Favourite', arr.join(','));
@@ -65,7 +83,7 @@ const Code = () => {
             ToastAndroid.show('Added to Favourites', ToastAndroid.SHORT);
           }
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
               
     }
@@ -77,42 +95,141 @@ const Code = () => {
           {
             await Storage.setItem("Favourite","");
           }
-      console.log(result)
+      // console.log(result)
       const arr = result.split(',') || [];
       if(arr.includes(code))
       {
         setIsFav(true);
       }
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
-    // console.log(code)
+    // // console.log(code)
   }
 
   async function get_playlist() {
     const playlist = await Storage.getItem('playlist');
     setPlaylists(playlist.split(','));
   }
+  
 
-  async function get_data(code) {
+async function get_data_vid(c){
+  try {
+    
+    const temp = c;
+    // console.log(temp)
+    const url = `https://r18.dev/videos/vod/movies/detail/-/combined=${temp}/json`;
+    // console.log(url)
+    const result = await axios.get(url);
+    // // console.log(result)
+    if(!result.data) {
+      // console.log("no data found!!!!!");
+      throw new Error("Invalid response data");
+    }
+    const final_result = getJsonResult(result.data)
+    return final_result;
+  
+  }
+    catch (error) {
+      try {
+        
+        const temp = c;
+        const second_url = `https://r18.dev/videos/vod/movies/detail/-/dvd_id=${temp}/json`;
+        // console.log('2nd : ',second_url);
+        const result = await axios.get(second_url);
+        if(!result.data) {  
+          // console.log("no data found!!!!!");
+          throw new Error("Invalid response data");
+        }
+        // console.log(result.data?.content_id)
+        const url = `https://r18.dev/videos/vod/movies/detail/-/combined=${result.data.content_id}/json`;
+        
+        const result_2 = await axios.get(url);
+        // console.log('catch'+typeof result_2.data);
+        const final_result_2 = getJsonResult(result_2.data);
+        return final_result_2;
+      } catch (error) {
+          // console.log(error);
+          return {status : "404",err : "code does not exist or its wrong"};
+      }
+      
+    }
+  
+}
+
+async function get_video_data(code){
+  const code_vid = code;
+      // const thumb = thumb;
+     
+      let code_final = code_vid;
+      // console.log("Code Final" , code_final);
+      if(code_final.includes('-') || code_final.includes(' '))
+      {
+          code_final = code_final.split("-").join("");
+          code_final = code_final.split(" ").join("");
+      }
+      const [loading , setLoading] = useState(true);
+      const [data , setData] = useState({});
+      const [noresult , setNoresult] = useState(false);
+  
+      const lowerCode = code_final.toLowerCase();
+        try {
+            
+                // console.log("Data not Found Calling api..")
+                const response = await get_data_vid(lowerCode);
+                // console.log(response.data ? true : false);
+                const result = response;
+                // console.log(result)
+                const jsonify_result = JSON.stringify(result);
+                // console.log(jsonify_result)
+                if(result.status == '404')
+                {
+                    setNoresult(true);
+                    // console.log("No result for ",lowerCode);
+                    return "";
+                }
+                // code list manage
+                let code_lists = await Storage.getItem("code_list");
+                let jav_codes = code_lists.split(",");
+                if(!jav_codes.includes(result.id))
+                    jav_codes = [...jav_codes,result.id];
+                await Storage.setItem("code_list",jav_codes.join(","));
+                
+                await Storage.setItem(`${code}`,jsonify_result);
+                // // console.log(resp)
+                return result;
+            
+        } catch (error) {
+            // console.log("fdfdf",error.message);
+        }
+    }
+  async function get_data(code,refresh=false) {
    try {
      setLoading(true);
-     console.log("CODE paGE ",code)
+     // console.log("CODE paGE ",code )
+     // console.log("Refresh : ", refresh)
+     if(refresh)
+     {
+      console.log("refreshing")
+      await Storage.removeItem(code);
+      get_video_data(code);
+     }
      const result = await Storage.getItem(code);
+     // console.log("abc result 1:",result);
      let parsed_data = result;
-      parsed_data = parsed_data.replace(`,${code}`,``)
+      parsed_data = parsed_data?.replace(`,${code}`,``)
       // console.log(parsed_data);
      get_playlist();
      check_Favs(code);
-    //  console.log(result)
+    //  // console.log(result)
     //  const result_main = result.slice(0,result.lastIndexOf(','));
-     // console.log(playlists);
+     // // console.log(playlists);
      setData(JSON.parse(parsed_data));
      setScreenshots(data?.screenshots);
      setRefreshing(false);
      setLoading(false);
    } catch (error) {
-      console.log(error);
+      // console.log("get_data",error);
    }
   }
 
@@ -120,7 +237,7 @@ const Code = () => {
     setIsFav(false);
     get_data(code);
     // setLoading(false)
-    // console.log("code",code);
+    // // console.log("code",code);
   }, [code]);
 
   return (
@@ -142,7 +259,7 @@ const Code = () => {
               </Text>
             </Pressable>
           </View>
-          <PlayList_Add></PlayList_Add>
+          <PlayList_Add playlistFunc={set_Playlist}></PlayList_Add>
           <ScrollView>
             <View className="flex gap-4 mt-3">
               {playlists?.map((item, index) => item !== '' && <Playlist_Item item={item} key={index} code={code}></Playlist_Item>)}
@@ -150,14 +267,15 @@ const Code = () => {
           </ScrollView>
         </View>
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={get_data} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>get_data(code,true)} />}
         className="w-screen h-fit"
       >
       
         <View className="absolute flex-row justify-between  w-screen px-4  z-10">
           <Pressable
             onTouchEnd={() => {
-              router.back();
+              router.dismissTo('/');
+              router.navigate('/');
             }}
             className="top-10  rounded-md"
           >
@@ -171,7 +289,7 @@ const Code = () => {
           <Pressable
             onTouchEnd = {()=>{
               set_Favs(code)
-              // console.log("set_favs")
+              // // console.log("set_favs")
             }}
             className="bg-yellow-500 flex justify-center items-center p-2 top-[calc(240px)] rounded-full"
           >
@@ -298,15 +416,16 @@ const Code = () => {
           <Text className="text-neutral-300 text-xl pl-5">Screenshots:</Text>
           <View className="p-4 w-screen flex-row justify-center flex-wrap gap-1 h-fit">
             {data?.screenshots &&
-              data.screenshots.map((item, key) => (
+              data.screenshots.map((item, index) => (
                 <Pressable
-                  onTouchEnd={() => {
-                    // setImageIdx(key);
-                    setCurrentIndex(key);
+                  onTouchStart={ () => {
+                    let idx = index
+                    setImageIdx(index);
+                    setCurrentIndex(index);
                     setVisible(true);
-                    // console.log(key ,imageIdx,currentIndex);
+                    console.log(idx ,imageIdx,currentIndex);
                   }}
-                  key={key}
+                  key={index}
                   className="bg-yellow-400"
                 >
                   <Image width={100} height={100} contentFit="cover" source={{ uri: item }}></Image>
@@ -323,30 +442,33 @@ const Code = () => {
             }}
               images={data.screenshots.map((item) => {
                 const url_item = item.includes('jp-') ? item : item.replace('-', 'jp-');
-                console.log(url_item);
-                console.log( imageIdx,currentIndex);
+                // console.log(url_item);
+                console.log(imageIdx, currentIndex);
+
                 return {
                   uri: url_item,
                 };
               })}
-              imageIndex={currentIndex}
-              onImageIndexChange={(index) =>{ setImageIdx(index)}}
-              HeaderComponent={(onRequestClose) => {
+              imageIndex={imageIdx}
+              onImageIndexChange={(index) =>{ setCurrentIndex(index.imageIndex+1);}}
+              HeaderComponent={(index) => {
+                console.log(index)
                 return (
                   <View className="h-16 bg-transparent w-full flex-row items-center justify-center">
                     <View className="w-fit mt-1">
-                      <Text className="text-white text-center" style={styles.text}>{`${imageIdx + 1} / ${
+                      <Text className="text-white text-center" style={styles.text}>{`${index.imageIndex + 1 } / ${
                         data?.screenshots ? data.screenshots.length : 0
                       }`}</Text>
                     </View>
-                    <Pressable onTouchEndCapture={()=> {setVisible(false)}} className="absolute right-1 top-5 bg-white  p-2 opacity-60">
-                      <Text color="white">X</Text>
+                    <Pressable onTouchEndCapture={()=> {setVisible(false)}} className="absolute right-1 rounded-full top-5 p-2 text-2xl font-extrabold bg-white  ">
+                      <Text color="white">x</Text>
                     </Pressable>
                   </View>
                 );
               }}
               // swipeToCloseEnabled = 'true'
-              doubleTapToZoomEnabled = 'true'
+                swipeToCloseEnabled
+              doubleTapToZoomEnabled 
               visible={visible}
               onRequestClose={() => setVisible(false)}
               />
@@ -368,17 +490,17 @@ const Code = () => {
 
 const Playlist_Item = ({ item, code }) => {
   const [check, setCheck] = useState(false);
-  console.log(item);
+  // console.log(item);
   async function checkData() {
     const result = await Storage.getItem(item);
     let res = result?.split(',') || [];
-    // console.log(result);
+    // // console.log(result);
     if (res.includes(code)) setCheck(true);
-    console.log("running for",code,item,check)
+    // // console.log("running for/",code,item,check)
   }
   async function addData(item, code) {
     try {
-      console.log(' playlsit added scfuly');
+      // console.log(' playlsit added scfuly');
       const result = await Storage.getItem(item);
       let res = result?.split(',') || [];
       if (!res.includes(code)) {
@@ -389,7 +511,7 @@ const Playlist_Item = ({ item, code }) => {
       ToastAndroid.show('Playlist Updated ✔️', ToastAndroid.SHORT);
       checkData();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
   useEffect(() => {
@@ -409,7 +531,7 @@ const Playlist_Item = ({ item, code }) => {
       <Text className="text-white">
         {item}
         {'\t'}
-        {check && <AntDesign name="checksquare" size={16} color="green" />}
+        {check && <AntDesign name="check-square" size={16} color="green" />}
       </Text>
     </Pressable>
   );

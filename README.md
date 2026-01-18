@@ -14,16 +14,16 @@ Sort videos based on Tags and Your Personal Playlist , or Actress and Studios.
  - [ ] playlist page
     - [x] added add to playlist functionality
     - [x] add items for showing all playlist
-    - [ ] adding image functionality to add pictures for each playlist
+    - [ ] adding image functionality to add/show pictures for each playlist
     - [x] page for each playlist
 
  - [ ] code page
     - [ ] show all data of video 
     - [ ] add all data of video to localStorage
     - [x] data of video to storage
-    - [ ] Add to playlist
+    - [x] Add to playlist
     - [x] Screenshot full view
-    - [ ] Trailer Video Player 
+    - [-] Trailer Video Player 
  
  - [x] tags page
     - [x] add tags in sort by alphabet

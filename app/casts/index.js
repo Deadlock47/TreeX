@@ -24,17 +24,17 @@ const index = () => {
     const result = await Storage.getItem("actress_list")
     // console.log(result)
     let res = result.split(',');
-    let sorted_res = res.sort((a,b)=>{
-      let nameA = a.toUpperCase();    
-      let nameB = b.toUpperCase();
-      if (nameA < nameB) {
-        return -1;
-      }
-      if (nameA > nameB) {
-        return 1;
-      }
-      return 0;
-    });
+    console.log(res[0]);
+    let sorted_res =res.sort(function (a, b) {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+          });
+        
     setActress_list(sorted_res);
     setRefreshing(false);
   }
