@@ -22,7 +22,7 @@ Sort videos based on Tags and Your Personal Playlist , or Actress and Studios.
     - [x] data of video to storage
     - [x] Add to playlist
     - [x] Screenshot full view
-    - [-] Trailer Video Player 
+    - [ ] Trailer Video Player [ NA Right Now ]
  
  - [x] tags page
     - [x] add tags in sort by alphabet
