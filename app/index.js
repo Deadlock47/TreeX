@@ -1,5 +1,5 @@
 
-import { View, Text, ScrollView, Image, Switch, RefreshControl,Dimensions, Alert, ToastAndroid } from 'react-native';
+import { View, Text, ScrollView, FlatList,Image, Switch, RefreshControl,Dimensions, Alert, ToastAndroid } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, router } from 'expo-router';
 import { Storage } from 'expo-sqlite/kv-store';
@@ -94,16 +94,36 @@ const index = () => {
               <Text className='text-neutral-300 p-1' >Results : {jav_list.length-1}</Text>
             </View>
           </View> */}
-          <ScrollView className = "w-screen p-2  h-fit "
+          {/* <ScrollView className = "w-screen p-2  h-fit "
               refreshControl={<RefreshControl refreshing={refreshing} onRefresh={get_jav_lists} ></RefreshControl>}
             
           >
              {
                   jav_list.map((item,index)=>item !== "" && <Item code={item} key={index} thumb={isThumbT} ></Item>)
                 }
-                {/* <Item code={'start255'}></Item> */}
                 <View className='mb-10' ></View>
-          </ScrollView>
+          </ScrollView> */}
+         <FlatList
+  data={jav_list.filter(item => item !== "")}
+  keyExtractor={(item, index) => index.toString()}
+  renderItem={({ item }) => (
+    <Item
+      code={item}
+      thumb={isThumbT}
+    />
+  )}
+  refreshControl={
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={get_jav_lists}
+    />
+  }
+  contentContainerStyle={{
+    padding: 8,
+    paddingBottom: 40,
+  }}
+  showsVerticalScrollIndicator={false}
+/>
 
       </View>
     </SafeAreaProvider>
