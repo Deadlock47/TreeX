@@ -1,5 +1,5 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text,ToastAndroid } from 'react-native'
+import React,{useEffect} from 'react'
 import { Tabs } from 'expo-router'
 import '../global.css'
 
@@ -11,13 +11,51 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
+import * as LocalAuthentication from 'expo-local-authentication'
 import { SQLiteProvider } from 'expo-sqlite';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BlurView } from "expo-blur";
 
+
 const _layout = () => {
   const focusedColor = "rgba(211, 169, 10, 1)"
+  const [isAuthSuccessfull, setIsAuthSuccessfull] = React.useState(false);
+  const [isBiometricSupported, setIsBiometricSupported] = React.useState(false);
 
+// Check if hardware supports biometrics
+  useEffect(() => {
+    (async () => {
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      setIsBiometricSupported(compatible);
+    })();
+    handleBiometricAuth();
+  },[]);
+const handleBiometricAuth = async () => {
+  try {
+    const biometricAuth = await LocalAuthentication.authenticateAsync({
+      promptMessage: 'Login with Biometrics',
+      fallbackLabel: 'Use passcode',
+      disableDeviceFallback: false,
+    });
+
+    if (biometricAuth.success) {
+      console.log('Biometric authentication successful');
+      ToastAndroid.show('Biometric authentication successful', ToastAndroid.SHORT);
+      setIsAuthSuccessfull(true);
+      // Handle successful authentication
+      // Example: Store token, navigate to home, etc.
+      return true;
+    } else {
+      console.log('Biometric authentication failed');
+      ToastAndroid.show('Biometric authentication failed', ToastAndroid.SHORT);
+      // Handle authentication failure
+      return false;
+    }
+  } catch (error) {
+    console.error('Biometric authentication error:', error);
+    return false;
+  }
+}
   async function initializeDatabase(db) {
     try {
         // await db.execAsync(create_table)
@@ -29,7 +67,10 @@ const _layout = () => {
 
   return (
     <GestureHandlerRootView>
-      
+   {   !isAuthSuccessfull ?
+      (<View className='flex-1 w-screen h-screen bg-black' ></View>) 
+      :
+   ( 
     <SQLiteProvider databaseName='maint.db' onInit={initializeDatabase} >
       <Tabs screenOptions={({route})=>({
         tabBarShowLabel : false,
@@ -267,6 +308,7 @@ const _layout = () => {
             
       </Tabs>
     </SQLiteProvider>
+    )}
     </GestureHandlerRootView>
 
   )

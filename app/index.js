@@ -9,6 +9,9 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from '@expo/vector-icons/Entypo';
 import Feather from '@expo/vector-icons/Feather';
 import LeftPane from '../components/leftPane';
+
+import * as LocalAuthentication from 'expo-local-authentication';
+
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
