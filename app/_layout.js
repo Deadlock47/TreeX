@@ -28,7 +28,7 @@ const _layout = () => {
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     })();
-    // handleBiometricAuth();
+    handleBiometricAuth();
   },[]);
 const handleBiometricAuth = async () => {
   try {

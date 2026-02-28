@@ -18,8 +18,7 @@ import { Storage } from 'expo-sqlite/kv-store';
 import axios from 'axios';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import Entypo from '@expo/vector-icons/Entypo';
-const { documentDirectory } = require('expo-file-system');
-const FileSystem = require('expo-file-system');
+
 const { width } = Dimensions.get('window');
 const POPUP_WIDTH = width * 0.75;
 
