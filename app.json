@@ -17,14 +17,13 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.deadlock0001.treex"
     },
-   
     "androidStatusBar": {
       "hidden": true
     },
-"androidNavigationBar": {
-  "visible": "sticky-immersive",
-  "barStyle": "dark-content"
-},
+    "androidNavigationBar": {
+      "visible": "sticky-immersive",
+      "barStyle": "dark-content"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -46,7 +45,8 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-font"
+      "expo-font",
+      "expo-video"
     ],
     "owner": "deadlock0001"
   }

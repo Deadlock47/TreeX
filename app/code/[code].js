@@ -1,13 +1,21 @@
 // React and React Native
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, ToastAndroid,Image, Dimensions, ScrollView, RefreshControl, StyleSheet, Pressable, Alert, TextInput, SafeAreaView, ActivityIndicator } from 'react-native';
+import { useVideoPlayer, VideoView } from "expo-video";
+import { useFocusEffect } from "expo-router";
+import { View, Text, ToastAndroid,Image, Dimensions, ScrollView, RefreshControl, StyleSheet, Pressable, Alert, TextInput, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Storage } from 'expo-sqlite/kv-store';
 import { useFonts } from 'expo-font';
 import { Inter_900Black } from '@expo-google-fonts/inter';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { Nunito_400Regular } from '@expo-google-fonts/nunito';
-// import VideoScreen from './player';
+
+
+import { useVideoPlayer, VideoView } from 'expo-video';
+import Constants from 'expo-constants';
+
+
 import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -17,6 +25,7 @@ import ImageView from 'react-native-image-viewing';
 // import BottomPlaylistDrawer from './bottomDrawer';
 import { StatusBar } from 'expo-status-bar';
 import { PlayList_Add } from '../../components/playlistAdd';
+import axios from 'axios';
 
 let { width, height } = Dimensions.get('window');
 
@@ -39,6 +48,7 @@ const Code = () => {
   const [isFav, setIsFav] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [playlists, setPlaylists] = useState([]);
+  const [trailerData, setTrailerData] = useState({});
   const [loading,setLoading] = useState(false);
 
   const handleClosePress = () => bottomSheetRef.current?.close();
@@ -48,9 +58,9 @@ const Code = () => {
       async function set_Playlist(txt) {
           try {
               const arr = await Storage.getItem('playlist');
-              // console.log('ffgfgfgfdgf', txt);
+              // // console.log('ffgfgfgfdgf', txt);
               let nw = arr.split(',');
-              // console.log(nw);
+              // // console.log(nw);
               if (!nw.includes(txt)) {
               nw = [...nw, txt];
               }
@@ -59,7 +69,7 @@ const Code = () => {
               ToastAndroid.show('Playlist Updated ✔️', ToastAndroid.SHORT);
               get_playlist();
           } catch (error) {
-              // console.log(error);
+              // // console.log(error);
           }
       }
 
@@ -68,8 +78,8 @@ const Code = () => {
         
         const result = await Storage.getItem('Favourite');
         let arr = result.split(',');
-          // // console.log(arr)
-          // // console.log("first",code)
+          // // // console.log(arr)
+          // // // console.log("first",code)
           if (isFav) {
             arr = arr.filter((item) => item !== code);
             await Storage.setItem('Favourite', arr.join(','));
@@ -83,7 +93,7 @@ const Code = () => {
             ToastAndroid.show('Added to Favourites', ToastAndroid.SHORT);
           }
         } catch (error) {
-          // console.log(error)
+          // // console.log(error)
         }
               
     }
@@ -95,16 +105,16 @@ const Code = () => {
           {
             await Storage.setItem("Favourite","");
           }
-      // console.log(result)
+      // // console.log(result)
       const arr = result.split(',') || [];
       if(arr.includes(code))
       {
         setIsFav(true);
       }
     } catch (error) {
-      // console.log(error)
+      // // console.log(error)
     }
-    // // console.log(code)
+    // // // console.log(code)
   }
 
   async function get_playlist() {
@@ -117,13 +127,13 @@ async function get_data_vid(c){
   try {
     
     const temp = c;
-    // console.log(temp)
+    // // console.log(temp)
     const url = `https://r18.dev/videos/vod/movies/detail/-/combined=${temp}/json`;
-    // console.log(url)
+    // // console.log(url)
     const result = await axios.get(url);
-    // // console.log(result)
+    // // // console.log(result)
     if(!result.data) {
-      // console.log("no data found!!!!!");
+      // // console.log("no data found!!!!!");
       throw new Error("Invalid response data");
     }
     const final_result = getJsonResult(result.data)
@@ -135,21 +145,21 @@ async function get_data_vid(c){
         
         const temp = c;
         const second_url = `https://r18.dev/videos/vod/movies/detail/-/dvd_id=${temp}/json`;
-        // console.log('2nd : ',second_url);
+        // // console.log('2nd : ',second_url);
         const result = await axios.get(second_url);
         if(!result.data) {  
-          // console.log("no data found!!!!!");
+          // // console.log("no data found!!!!!");
           throw new Error("Invalid response data");
         }
-        // console.log(result.data?.content_id)
+        // // console.log(result.data?.content_id)
         const url = `https://r18.dev/videos/vod/movies/detail/-/combined=${result.data.content_id}/json`;
         
         const result_2 = await axios.get(url);
-        // console.log('catch'+typeof result_2.data);
+        // // console.log('catch'+typeof result_2.data);
         const final_result_2 = getJsonResult(result_2.data);
         return final_result_2;
       } catch (error) {
-          // console.log(error);
+          // // console.log(error);
           return {status : "404",err : "code does not exist or its wrong"};
       }
       
@@ -162,7 +172,7 @@ async function get_video_data(code){
       // const thumb = thumb;
      
       let code_final = code_vid;
-      // console.log("Code Final" , code_final);
+      // // console.log("Code Final" , code_final);
       if(code_final.includes('-') || code_final.includes(' '))
       {
           code_final = code_final.split("-").join("");
@@ -175,17 +185,17 @@ async function get_video_data(code){
       const lowerCode = code_final.toLowerCase();
         try {
             
-                // console.log("Data not Found Calling api..")
+                // // console.log("Data not Found Calling api..")
                 const response = await get_data_vid(lowerCode);
-                // console.log(response.data ? true : false);
+                // // console.log(response.data ? true : false);
                 const result = response;
-                // console.log(result)
+                // // console.log(result)
                 const jsonify_result = JSON.stringify(result);
-                // console.log(jsonify_result)
+                // // console.log(jsonify_result)
                 if(result.status == '404')
                 {
                     setNoresult(true);
-                    // console.log("No result for ",lowerCode);
+                    // // console.log("No result for ",lowerCode);
                     return "";
                 }
                 // code list manage
@@ -196,52 +206,65 @@ async function get_video_data(code){
                 await Storage.setItem("code_list",jav_codes.join(","));
                 
                 await Storage.setItem(`${code}`,jsonify_result);
-                // // console.log(resp)
+                // // // console.log(resp)
                 return result;
             
         } catch (error) {
-            // console.log("fdfdf",error.message);
+            // // console.log("fdfdf",error.message);
         }
     }
   async function get_data(code,refresh=false) {
    try {
      setLoading(true);
-     // console.log("CODE paGE ",code )
-     // console.log("Refresh : ", refresh)
+     // // console.log("CODE paGE ",code )
+     // // console.log("Refresh : ", refresh)
      if(refresh)
      {
-      console.log("refreshing")
+      // console.log("refreshing")
       await Storage.removeItem(code);
       get_video_data(code);
      }
      const result = await Storage.getItem(code);
-     // console.log("abc result 1:",result);
+     // // console.log("abc result 1:",result);
      let parsed_data = result;
       parsed_data = parsed_data?.replace(`,${code}`,``)
-      // console.log(parsed_data);
+      // // console.log(parsed_data);
      get_playlist();
      check_Favs(code);
-    //  // console.log(result)
+    //  // // console.log(result)
     //  const result_main = result.slice(0,result.lastIndexOf(','));
-     // // console.log(playlists);
+     // // // console.log(playlists);
      setData(JSON.parse(parsed_data));
      setScreenshots(data?.screenshots);
      setRefreshing(false);
      setLoading(false);
    } catch (error) {
-      // console.log("get_data",error);
+      // // console.log("get_data",error);
    }
   }
+
+  async function get_trailer_data(code) {
+      // read fron json bin   69a2705bae596e708f514788
+      let data = await Storage.getItem("trailer_data");
+      data = JSON.parse(data);
+
+      setTrailerData(data); 
+        // console.log("getting trailer data ",trailerData)
+        // console.log(data[code][0])
+       
+      
+    }
 
   useEffect(() => {
     setIsFav(false);
     get_data(code);
+    get_trailer_data(code);
     // setLoading(false)
-    // // console.log("code",code);
+    // // // console.log("code",code);
   }, [code]);
 
   return (
-    <SafeAreaView className="bg-neutral-900 w-screen h-full">
+    <View className="bg-neutral-900 w-screen h-full">
       
       { loading ? 
         <View className="flex justify-center items-center w-screen h-screen">
@@ -289,7 +312,7 @@ async function get_video_data(code){
           <Pressable
             onTouchEnd = {()=>{
               set_Favs(code)
-              // // console.log("set_favs")
+              // // // console.log("set_favs")
             }}
             className="bg-yellow-500 flex justify-center items-center p-2 top-[calc(240px)] rounded-full"
           >
@@ -412,6 +435,14 @@ async function get_video_data(code){
             </ScrollView>
           </View>
         )}
+        <View>
+          <Text className="text-neutral-300 text-xl pl-5">Trailer </Text>
+          <View>{  trailerData && trailerData[code] ? <View className="w-screen h-[220px] mt-2 px-3" > 
+            
+            <VideoScreen videoSource={trailerData && trailerData[code] ? trailerData[code][0] : null}></VideoScreen> 
+          
+          </View> : <View className="w-screen h-[220px] mt-2 px-3" > <ActivityIndicator size="large" color="#0000ff" /></View>}</View>
+        </View>
         <View className="mb-7 h-fit w-screen">
           <Text className="text-neutral-300 text-xl pl-5">Screenshots:</Text>
           <View className="p-4 w-screen flex-row justify-center flex-wrap gap-1 h-fit">
@@ -423,7 +454,7 @@ async function get_video_data(code){
                     setImageIdx(index);
                     setCurrentIndex(index);
                     setVisible(true);
-                    console.log(idx ,imageIdx,currentIndex);
+                    // // console.log(idx ,imageIdx,currentIndex);
                   }}
                   key={index}
                   className="bg-yellow-400"
@@ -442,8 +473,8 @@ async function get_video_data(code){
             }}
               images={data.screenshots.map((item) => {
                 const url_item = item.includes('jp-') ? item : item.replace('-', 'jp-');
-                // console.log(url_item);
-                console.log(imageIdx, currentIndex);
+                // // console.log(url_item);
+                // // console.log(imageIdx, currentIndex);
 
                 return {
                   uri: url_item,
@@ -452,7 +483,7 @@ async function get_video_data(code){
               imageIndex={imageIdx}
               onImageIndexChange={(index) =>{ setCurrentIndex(index.imageIndex+1);}}
               HeaderComponent={(index) => {
-                console.log(index)
+                // console.log(index)
                 return (
                   <View className="h-16 bg-transparent w-full flex-row items-center justify-center">
                     <View className="w-fit mt-1">
@@ -474,14 +505,11 @@ async function get_video_data(code){
               />
             )}
         </View>
-        <View className="w-screen h-fit mb-10">
-          <Text className="text-neutral-200 text-xl pl-5">Trailer:</Text>
-          {/* <View>{data?.preview && <VideoScreen video_url={data?.preview}></VideoScreen>}</View> */}
-        </View>
+     
         </ScrollView>
       </View>
     }
-    </SafeAreaView>
+    </View>
     
   );
 };
@@ -490,17 +518,17 @@ async function get_video_data(code){
 
 const Playlist_Item = ({ item, code }) => {
   const [check, setCheck] = useState(false);
-  // console.log(item);
+  // // console.log(item);
   async function checkData() {
     const result = await Storage.getItem(item);
     let res = result?.split(',') || [];
-    // // console.log(result);
+    // // // console.log(result);
     if (res.includes(code)) setCheck(true);
-    // // console.log("running for/",code,item,check)
+    // // // console.log("running for/",code,item,check)
   }
   async function addData(item, code) {
     try {
-      // console.log(' playlsit added scfuly');
+      // // console.log(' playlsit added scfuly');
       const result = await Storage.getItem(item);
       let res = result?.split(',') || [];
       if (!res.includes(code)) {
@@ -511,7 +539,7 @@ const Playlist_Item = ({ item, code }) => {
       ToastAndroid.show('Playlist Updated ✔️', ToastAndroid.SHORT);
       checkData();
     } catch (error) {
-      // console.log(error);
+      // // console.log(error);
     }
   }
   useEffect(() => {
@@ -548,6 +576,52 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 36,
     alignItems: 'center',
+  },
+});
+
+const VideoScreen = ({videoSource}) => {
+  const player = useVideoPlayer(videoSource, player => {
+    player.loop = true;
+    player.pause();
+
+  });
+  useFocusEffect(
+    useCallback(() => {
+
+      // screen focused → optional play
+      player.play();
+
+      return () => {
+        // screen unfocused → pause
+        player.pause();
+      };
+
+    }, [player])
+  );
+
+  // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
+
+  return (
+    
+      <VideoView  
+      style={styles_video.video} 
+      player={player} 
+      allowsFullscreen allowsPictureInPicture />
+     
+  );
+}
+
+const styles_video = StyleSheet.create({
+  contentContainer: {
+   flex: 1,
+    marginTop: Constants.statusBarHeight,
+  },
+  video: {
+    width: '100%',
+    height: '100%',
+  },
+  controlsContainer: {
+    padding: 10,
   },
 });
 

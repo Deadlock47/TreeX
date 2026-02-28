@@ -19,7 +19,7 @@ import { BlurView } from "expo-blur";
 
 const _layout = () => {
   const focusedColor = "rgba(211, 169, 10, 1)"
-  const [isAuthSuccessfull, setIsAuthSuccessfull] = React.useState(false);
+  const [isAuthSuccessfull, setIsAuthSuccessfull] = React.useState(true);
   const [isBiometricSupported, setIsBiometricSupported] = React.useState(false);
 
 // Check if hardware supports biometrics
@@ -28,7 +28,7 @@ const _layout = () => {
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     })();
-    handleBiometricAuth();
+    // handleBiometricAuth();
   },[]);
 const handleBiometricAuth = async () => {
   try {
@@ -86,7 +86,7 @@ const handleBiometricAuth = async () => {
             position:'absolute',
             left:0,
             right:0,
-            display: route.name === 'code' ? 'none' : 'flex'
+            display: route.name === 'code' || route.name === 'jveel' ? 'none' : 'flex'
           },
           tabBarBackground: () => (
             <BlurView
@@ -130,7 +130,6 @@ const handleBiometricAuth = async () => {
             )
           }
             }}  ></Tabs.Screen>
-          {/* <Tabs.Screen name='content' options={{headerShown:false}} ></Tabs.Screen> */}
           <Tabs.Screen name='searchScreen' options={{headerShown:false,href:null, tabBarIcon : ({focused,color,size})=>
           {
             return (
@@ -301,6 +300,35 @@ const handleBiometricAuth = async () => {
                 color : focused ? focusedColor : 'white',
                 fontSize:12
               }}>Casts</Text>
+              </View>
+            )
+          }
+            }} ></Tabs.Screen>
+        <Tabs.Screen name='jveel'  options={{headerShown:false, href:null, tabBarIcon : ({focused,color,size})=>
+          {
+            return (
+              <View className="flex justify-center items-center" style={{
+                backgroundColor:'transparent' , 
+                width:'60' , 
+                height:'55',
+                display : 'flex',
+                // flexDirection : 'column',
+                justifyContent:'center',
+                alignItems :'center'
+                
+              }}>
+
+              <View>
+                {
+                  focused ? 
+                  <MaterialCommunityIcons name="gender-male-female" size={24} color={focusedColor} /> : 
+                  <MaterialCommunityIcons name="gender-male-female" size={24} color="white" />
+                }
+              </View>
+              <Text style={{
+                color : focused ? focusedColor : 'white',
+                fontSize:12
+              }}>Jveel</Text>
               </View>
             )
           }

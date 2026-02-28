@@ -10,6 +10,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Feather from '@expo/vector-icons/Feather';
 import LeftPane from '../components/leftPane';
 
+// import Entypo from '@expo/vector-icons/Entypo';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 import Animated, {
@@ -90,7 +91,7 @@ const index = () => {
             }} name="search" size={34} color="white" className="bg-[#ca9401] rounded-2xl p-2" />
             
           </View>
-          {/* <View className="h-px bg-gray-200 my-2" /> */}
+          
          
           {/* <View className='flex justify-end pl-3 pt-2 w-screen '>
             <View className='' >
@@ -129,6 +130,16 @@ const index = () => {
 />
 
       </View>
+      {/* <View className='absolute z-30 bottom-20 right-6 w-16 h-16 p-3 rounded-full bg-[#232121c9] flex-row items-center justify-center'
+          onTouchEnd={()=>{
+            router.push("/jveel")
+          }}
+      >
+        <Entypo name="video" size={24} color="white" />
+      </View> */}
+       {/* <View className='absolute bottom-0 w-screen h-16 bg-neutral-900 flex-row items-center justify-center' >
+        <Text className='text-neutral-300' >Made with ❤️ by Jveel</Text>
+      </View> */}
     </SafeAreaProvider>
   )
 }
