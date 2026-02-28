@@ -1,6 +1,6 @@
 // React and React Native
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useVideoPlayer, VideoView } from "expo-video";
+
 import { useFocusEffect } from "expo-router";
 import { View, Text, ToastAndroid,Image, Dimensions, ScrollView, RefreshControl, StyleSheet, Pressable, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
