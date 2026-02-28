@@ -436,12 +436,19 @@ async function get_video_data(code){
           </View>
         )}
         <View>
-          <Text className="text-neutral-300 text-xl pl-5">Trailer </Text>
-          <View>{  trailerData && trailerData[code] ? <View className="w-screen h-[220px] mt-2 px-3" > 
-            
-            <VideoScreen videoSource={trailerData && trailerData[code] ? trailerData[code][0] : null}></VideoScreen> 
+          <Text className="text-neutral-300 text-xl pl-5">Trailer : ({trailerData && trailerData[code] ? trailerData[code].length : 0})</Text>
+          { (trailerData && trailerData[code]) ? <View>
           
-          </View> : <View className="w-screen h-[220px] mt-2 px-3" > <ActivityIndicator size="large" color="#0000ff" /></View>}</View>
+          <View className="w-screen h-[220px] mt-2 px-3" > 
+            <VideoScreen videoSource={trailerData && trailerData[code] ? trailerData[code][0] : null}></VideoScreen> 
+          </View>
+          </View> 
+          : 
+          <View className="w-screen h-[220px] mt-2 px-3 flex justify-center items-center" >
+            <Text><ActivityIndicator size="large" color="#0000ff" /></Text>
+          </View>
+          
+          }
         </View>
         <View className="mb-7 h-fit w-screen">
           <Text className="text-neutral-300 text-xl pl-5">Screenshots:</Text>
@@ -492,7 +499,7 @@ async function get_video_data(code){
                       }`}</Text>
                     </View>
                     <Pressable onTouchEndCapture={()=> {setVisible(false)}} className="absolute right-1 rounded-full top-5 p-2 text-2xl font-extrabold bg-white  ">
-                      <Text color="white">x</Text>
+                      <Text style={{ color: 'black' }}>x</Text>
                     </Pressable>
                   </View>
                 );
@@ -556,11 +563,10 @@ const Playlist_Item = ({ item, code }) => {
       }}
       className="w-auto mx-5 p-3 bg-neutral-900 rounded-lg"
     >
-      <Text className="text-white">
-        {item}
-        {'\t'}
+      <View className="flex-row items-center gap-2">
+        <Text className="text-white">{item}</Text>
         {check && <AntDesign name="check-square" size={16} color="green" />}
-      </Text>
+      </View>
     </Pressable>
   );
 };
@@ -580,43 +586,62 @@ const styles = StyleSheet.create({
 });
 
 const VideoScreen = ({videoSource}) => {
-  const player = useVideoPlayer(videoSource, player => {
-    player.loop = true;
-    player.pause();
+  
+//  let player = useVideoPlayer(videoSource, p => {
+//     p.loop = true;
+//   });
+ const { code } = useLocalSearchParams();
+const [instanceKey, setInstanceKey] = useState(Math.random()*1000);
+const player = useVideoPlayer(videoSource);
+  const playerRef = useRef(null);
 
-  });
+  // always keep latest player
+  playerRef.current = player;
+
   useFocusEffect(
     useCallback(() => {
 
-      // screen focused → optional play
-      player.play();
+      const current = playerRef.current;
+      //setInstanceKey(prev => prev + Math.random()*1000);
+     console.log(instanceKey);
+      // play safely
+      try {
+        current?.pause();
+      } catch {}
 
       return () => {
-        // screen unfocused → pause
-        player.pause();
+        // release safely
+        try {
+          current?.pause();
+        } catch {}
       };
 
-    }, [player])
+    }, [code])
   );
 
   // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
 
   return (
-    
+    <View key={`${code}-${ instanceKey}`} style={{flex: 1, backgroundColor: 'black'}}>
+
       <VideoView  
+      key={`${code}-${ instanceKey}`}
       style={styles_video.video} 
       player={player} 
-      allowsFullscreen allowsPictureInPicture />
+      allowsPictureInPicture />
      
+    </View>
   );
 }
 
 const styles_video = StyleSheet.create({
   contentContainer: {
    flex: 1,
+   backgroundColor: 'black',
     marginTop: Constants.statusBarHeight,
   },
   video: {
+   backgroundColor: 'black',
     width: '100%',
     height: '100%',
   },
@@ -624,5 +649,7 @@ const styles_video = StyleSheet.create({
     padding: 10,
   },
 });
-
+export const unstable_settings = {
+  unmountOnBlur: true,
+};
 export default Code;

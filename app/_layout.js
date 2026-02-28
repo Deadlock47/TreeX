@@ -19,7 +19,7 @@ import { BlurView } from "expo-blur";
 
 const _layout = () => {
   const focusedColor = "rgba(211, 169, 10, 1)"
-  const [isAuthSuccessfull, setIsAuthSuccessfull] = React.useState(true);
+  const [isAuthSuccessfull, setIsAuthSuccessfull] = React.useState(false);
   const [isBiometricSupported, setIsBiometricSupported] = React.useState(false);
 
 // Check if hardware supports biometrics
@@ -72,7 +72,9 @@ const handleBiometricAuth = async () => {
       :
    ( 
     <SQLiteProvider databaseName='maint.db' onInit={initializeDatabase} >
-      <Tabs screenOptions={({route})=>({
+      <Tabs
+      
+      screenOptions={({route})=>({
         tabBarShowLabel : false,
           tabBarStyle:{
             backgroundColor : 'transparent',
@@ -98,7 +100,9 @@ const handleBiometricAuth = async () => {
             marginTop:8,
             borderRadius:28,
             
-          }
+          },
+          
+          unmountOnBlur: true
           
         })} >
           <Tabs.Screen name='index' options={{headerShown:false, tabBarIcon : ({focused,color,size})=>
