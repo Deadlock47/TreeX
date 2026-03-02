@@ -38,7 +38,7 @@ const Code = () => {
 
   const { code } = useLocalSearchParams();
   const bottomSheetRef = useRef(null);
-
+  console.log(code)
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState({});
   const [screenshots, setScreenshots] = useState([]);
@@ -170,32 +170,33 @@ async function get_data_vid(c){
 async function get_video_data(code){
   const code_vid = code;
       // const thumb = thumb;
-     
+
       let code_final = code_vid;
-      // // console.log("Code Final" , code_final);
+      console.log("Code Initial" , code_vid);
       if(code_final.includes('-') || code_final.includes(' '))
-      {
+        {
           code_final = code_final.split("-").join("");
           code_final = code_final.split(" ").join("");
-      }
-      const [loading , setLoading] = useState(true);
-      const [data , setData] = useState({});
-      const [noresult , setNoresult] = useState(false);
+        }
+        // const [loading , setLoading] = useState(true);
+        // const [data , setData] = useState({});
+        // const [noresult , setNoresult] = useState(false);
+        console.log("Code Final" , code_final);
   
       const lowerCode = code_final.toLowerCase();
         try {
             
                 // // console.log("Data not Found Calling api..")
                 const response = await get_data_vid(lowerCode);
-                // // console.log(response.data ? true : false);
+                // console.log(response.data ? true : false);
                 const result = response;
                 // // console.log(result)
                 const jsonify_result = JSON.stringify(result);
                 // // console.log(jsonify_result)
                 if(result.status == '404')
                 {
-                    setNoresult(true);
-                    // // console.log("No result for ",lowerCode);
+                    // setNoresult(true);
+                    console.log("No result for ",lowerCode);
                     return "";
                 }
                 // code list manage
@@ -216,7 +217,7 @@ async function get_video_data(code){
   async function get_data(code,refresh=false) {
    try {
      setLoading(true);
-     // // console.log("CODE paGE ",code )
+     console.log("CODE paGE ",code )
      // // console.log("Refresh : ", refresh)
      if(refresh)
      {

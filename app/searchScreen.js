@@ -187,7 +187,7 @@ const search = () => {
                     code_final = item.split("-").join("");
                     code_final = item.split(" ").join("");
                   }
-                  return item !== "" && <Item  code={code_final} key={key} thumb={true}></Item>
+                  return item !== "" && <Item  code={code_final} key={key} thumb={false}></Item>
                 })
               }
             </View>

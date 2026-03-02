@@ -20,6 +20,7 @@ import get_data from './data_fetch';
 const Item = ({code,thumb}) => {
     const code_vid = code;
     // const thumb = thumb;
+    // console.log(code_vid)
     let [fontsLoaded] = useFonts({
               Inter_900Black,
               Roboto_400Regular,
@@ -27,12 +28,12 @@ const Item = ({code,thumb}) => {
               Nunito_700Bold
             });
     let code_final = code_vid;
-    // console.log(code_final);
     if(code_final.includes('-') || code_final.includes(' '))
-    {
-        code_final = code_final.split("-").join("");
-        code_final = code_final.split(" ").join("");
-    }
+        {
+            code_final = code_final.split("-").join("");
+            code_final = code_final.split(" ").join("");
+        }
+    // console.log(code_final);
     const [loading , setLoading] = useState(true);
     const [data , setData] = useState({});
     const [noresult , setNoresult] = useState(false);
@@ -46,7 +47,7 @@ async function set_data(tag_code,_code)
     {
         await Storage.setItem(tag_code.toString(),"");
     }
-    const main_arr = result.split(',');
+    const main_arr = result ? result.split(',') : [];
     let arr =  [...main_arr] 
     if(arr.includes(_code)) return;
     arr = [...arr,_code];
@@ -185,7 +186,7 @@ async function store_each_tag(newTags) {
                 const response = await get_data(lowerCode);
                 console.log(response.data ? true : false);
                 const result = response;
-                console.log(result)
+                console.log(result.length)
                 const jsonify_result = JSON.stringify(result);
                 console.log(jsonify_result)
                 if(result.status == '404')
@@ -200,8 +201,8 @@ async function store_each_tag(newTags) {
                 if(!jav_codes.includes(result.id))
                     jav_codes = [...jav_codes,result.id];
                 await Storage.setItem("code_list",jav_codes.join(","));
-                
-                await Storage.setItem(`${code}`,jsonify_result);
+                // console.log("finalized code >>>",code.includes('-') ? code : result.id)
+                await Storage.setItem(`${code.includes('-') ? code : result.id}`,jsonify_result);
                 // console.log(resp)
                 return result;
             }
@@ -320,8 +321,8 @@ async function store_each_tag(newTags) {
         
                         <Image className=" rounded-t-xl " width={'auto'} height={248} resizeMode='contain' source={{uri : data?.poster}} ></Image>
                         <Text numberOfLines={2} style={{fontFamily: 'Nunito_700Bold',color:'white'}} className="p-2 pb-0">
-                            {data?.id}
-                                                    <Text numberOfLines={2} style={{fontFamily: 'Roboto_400Regular','color':'white'}} className="p-3"> | {data?.title?.length && data?.title }</Text>
+                            {code}
+                            <Text numberOfLines={2} style={{fontFamily: 'Roboto_400Regular','color':'white'}} className="p-3"> | {data?.title?.length && data?.title }</Text>
                         </Text>
 
                         

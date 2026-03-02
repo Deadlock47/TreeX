@@ -26,16 +26,16 @@ const index = () => {
     const [refreshing,setRefreshing] = useState(true);
     const [isSwitchEnabled, setIsSwitchEnabled] = useState(false);
     const [isThumbT, setIsThumbT] = useState(false);
-    async function refresh_data()
-    {
-      const result = await Storage.getItem("code_list");
-      // console.log(result);
-      //
-      await Storage.clear();
-      await Clipboard.setStringAsync(result);
-      
+    // async function refresh_data()
+    // {
+    //   const result = await Storage.getItem("code_list");
+    //   // console.log(result);
+    //   //
+    //   await Storage.clear();
+    //   await Clipboard.setStringAsync(result);
+      // "STARS-298",
 
-    }
+    // }
 
     async function get_jav_lists() {
       const lists = await Storage.getItem("code_list");
@@ -135,6 +135,7 @@ const index = () => {
             router.push("/jveel")
           }}
       >
+      "STARS-298",
         <Entypo name="video" size={24} color="white" />
       </View> */}
        {/* <View className='absolute bottom-0 w-screen h-16 bg-neutral-900 flex-row items-center justify-center' >

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -143,7 +143,15 @@ export default function LeftPane({isOpen, setIsOpen}) {
     Alert.alert('Profile', 'View your profile');
   };
 
+  const [size , setSize] = useState(0);
 
+  useEffect(() => {
+    const fetchSize = async () => {
+      const result = await Storage.getItem("code_list");
+      setSize(result ? result.split(",").length : 0);
+    };
+    fetchSize();
+  }, []);
 
   return (
     <View className="flex-1  justify-center h-full w-full items-center">
@@ -176,7 +184,18 @@ export default function LeftPane({isOpen, setIsOpen}) {
 
             {/* Menu Items */}
             <View className="p-4 flex-1 flex-col gap-3">
-            
+
+                <View 
+                  className="flex-row h-12 items-center p-2  rounded-xl mb-2 bg-[#d3980f]"
+                  // onTouchEnd={handleTrailerData}
+                >
+                  {/* <Ionicons name="refresh" size={24} color="#8B5CF6" /> */}
+                  {/* <Ionicons name="cloud-download-outline" size={24} color="black" /> */}
+                  <Text className="text-lg text-center font-bold text-[#000000] ml-4 flex-1">
+                    Collection Size : {size}
+                  </Text>
+                </View>
+
                 <TouchableOpacity
                   className="flex-row h-16 items-center  p-4 rounded-xl mb-2 bg-gray-50"
                   onPress={handleProfile}
@@ -219,6 +238,7 @@ export default function LeftPane({isOpen, setIsOpen}) {
                     Update TFiles
                   </Text>
                 </TouchableOpacity>
+
 
             </View>
 
