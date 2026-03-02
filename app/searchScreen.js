@@ -27,6 +27,14 @@ const search = () => {
 
   async function set_bulk_video_storage(codes){
     try {
+      // ### fetch the data for the code
+      // setLoading(true);
+      // await bulk_adder(codes);
+      // console.log("pausing 2 sec")
+      // pause(2000);
+      // setLoading(false);
+
+      // ### code list manage
       const result = await Storage.getItem("code_list");  
       let jav_codes = codes.split(",");
       if(!result)

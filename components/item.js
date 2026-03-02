@@ -166,12 +166,12 @@ async function store_each_tag(newTags) {
             console.log(error);
         }
     }
-    async function get_video_data(lowerCode){
+    async function get_video_data(lowerCode , refresh = false){
         try {
             const cachedData = await Storage.getItem(code_vid);
             // console.log(code_vid);
             // console.log(cachedData);
-            if(cachedData)
+            if(cachedData && !refresh)
             {
                 console.log("found cached data");
                 // console.log("cached",cachedData)
@@ -210,6 +210,8 @@ async function store_each_tag(newTags) {
             console.log(error.message);
         }
     }
+
+
 
     useEffect(()=>{
         setNoresult(false);
@@ -298,7 +300,7 @@ async function store_each_tag(newTags) {
                             <Text className='text-white bg-yellow-500 p-1 rounded-md ' 
                             onTouchEnd={
                                 ()=>{
-                                    get_video_data(lowerCode);
+                                    get_video_data(lowerCode,true);
                                 }
                             }
                             >Reload</Text>
