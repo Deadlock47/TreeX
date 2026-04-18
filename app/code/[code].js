@@ -171,30 +171,31 @@ async function get_video_data(code){
       // const thumb = thumb;
      
       let code_final = code_vid;
-      // // console.log("Code Final" , code_final);
+      console.log("Code Initial" , code_vid);
       if(code_final.includes('-') || code_final.includes(' '))
       {
           code_final = code_final.split("-").join("");
           code_final = code_final.split(" ").join("");
       }
-      const [loading , setLoading] = useState(true);
-      const [data , setData] = useState({});
-      const [noresult , setNoresult] = useState(false);
+        // const [loading , setLoading] = useState(true);
+        // const [data , setData] = useState({});
+        // const [noresult , setNoresult] = useState(false);
+        console.log("Code Final" , code_final);
   
       const lowerCode = code_final.toLowerCase();
         try {
             
                 // // console.log("Data not Found Calling api..")
                 const response = await get_data_vid(lowerCode);
-                // // console.log(response.data ? true : false);
+                // console.log(response.data ? true : false);
                 const result = response;
                 // // console.log(result)
                 const jsonify_result = JSON.stringify(result);
                 // // console.log(jsonify_result)
                 if(result.status == '404')
                 {
-                    setNoresult(true);
-                    // // console.log("No result for ",lowerCode);
+                    // setNoresult(true);
+                    console.log("No result for ",lowerCode);
                     return "";
                 }
                 // code list manage
@@ -215,7 +216,7 @@ async function get_video_data(code){
   async function get_data(code,refresh=false) {
    try {
      setLoading(true);
-     // // console.log("CODE paGE ",code )
+     console.log("CODE paGE ",code )
      // // console.log("Refresh : ", refresh)
      if(refresh)
      {
@@ -303,9 +304,9 @@ async function get_video_data(code){
           >
             <View className='bg-[#d4960781] h-fit p-1  ' >
 
-       
+            <Text>
               <Ionicons name="chevron-back" size={30} color="black" />
-           
+            </Text>
             </View>
           </Pressable>
           <Pressable
@@ -317,12 +318,12 @@ async function get_video_data(code){
           >
             <View className=''>
 
-         
+            <Text>
               {isFav ?
               <Ionicons name="heart-sharp" size={30} color="red" />
               :
               <Ionicons name="heart-outline" size={30} color="black" />}
-    
+            </Text>
               </View>
           </Pressable>
         </View>
@@ -348,8 +349,7 @@ async function get_video_data(code){
         </View>
         <View className="w-screen">
           <Text style={{ color: 'white' }} className="p-3 -mt-4 text-base">
-            <Text className="font-bold text-2xl">{data?.id}</Text> 
-            {'\n'}
+            <Text className="font-bold text-2xl">{data?.id}</Text> {'\n'}
             {data?.title}
           </Text>
         </View>
@@ -408,7 +408,7 @@ async function get_video_data(code){
             })}
           </View>
         </View>
-        {data?.actress?.length > 0 && (
+        {data?.actress && (
           <View className="w-screen h-fit p-3">
             <Text className="text-neutral-300 text-xl p-2">Actress:</Text>
             <ScrollView horizontal className="w-screen h-auto flex-row gap-6 p-2">
@@ -436,20 +436,26 @@ async function get_video_data(code){
           </View>
         )}
         <View>
-          <Text className="text-neutral-300 text-xl pl-5">Trailer :</Text>
-          <View>
-            {  (trailerData && trailerData[code]) ? 
-            <View className="w-screen h-[220px] mt-2 px-3" > 
-            
-            <VideoScreen videoSource={trailerData && trailerData[code] ? trailerData[code][0] : null}></VideoScreen> 
+          <Text className="text-neutral-300 text-xl pl-5">Trailer : ({trailerData && trailerData[code] ? trailerData[code].length : 0})</Text>
+          { (trailerData && trailerData[code]) ? <View>
           
-          </View> : <View className="w-screen h-[220px] mt-2 px-3" > <ActivityIndicator size="large" color="#0000ff" /></View>}</View>
+            <View className="w-screen h-[220px] mt-2 px-3" > 
+            {/* <Text className='text-white'>fffff</Text> */}
+            <VideoScreen videoSource={trailerData && trailerData[code] ? trailerData[code][0] : null} data={data}></VideoScreen> 
+          </View>
+          </View> 
+          : 
+          <View className="w-screen h-[220px] mt-2 px-3 flex justify-center items-center" >
+            <Text><ActivityIndicator size="large" color="#0000ff" /></Text>
+          </View>
+          
+          }
         </View>
         <View className="mb-7 h-fit w-screen">
           <Text className="text-neutral-300 text-xl pl-5">Screenshots:</Text>
           <View className="p-4 w-screen flex-row justify-center flex-wrap gap-1 h-fit">
-            {data?.screenshots?.length > 0 &&
-              data?.screenshots?.map((item, index) => (
+            {data?.screenshots &&
+              data.screenshots.map((item, index) => (
                 <Pressable
                   onTouchStart={ () => {
                     let idx = index
@@ -494,7 +500,7 @@ async function get_video_data(code){
                       }`}</Text>
                     </View>
                     <Pressable onTouchEndCapture={()=> {setVisible(false)}} className="absolute right-1 rounded-full top-5 p-2 text-2xl font-extrabold bg-white  ">
-                      <Text color="white">x</Text>
+                      <Text style={{ color: 'black' }}>x</Text>
                     </Pressable>
                   </View>
                 );
@@ -506,6 +512,9 @@ async function get_video_data(code){
               onRequestClose={() => setVisible(false)}
               />
             )}
+        </View>
+            <View className='w-screen'>
+              {/* <Full_Video_Buttom code={code}></Full_Video_Buttom> */}
         </View>
      
         </ScrollView>
@@ -558,11 +567,10 @@ const Playlist_Item = ({ item, code }) => {
       }}
       className="w-auto mx-5 p-3 bg-neutral-900 rounded-lg"
     >
-      <Text className="text-white">
-        {item}
-        {'\t'}
+      <View className="flex-row items-center gap-2">
+        <Text className="text-white">{item}</Text>
         {check && <AntDesign name="check-square" size={16} color="green" />}
-      </Text>
+      </View>
     </Pressable>
   );
 };
@@ -593,11 +601,13 @@ const [instanceKey, setInstanceKey] = useState(Math.random()*1000);
 
   // always keep latest player
   playerRef.current = player;
+
   useFocusEffect(
     useCallback(() => {
+
  const current = playerRef.current;
       //setInstanceKey(prev => prev + Math.random()*1000);
-    //  console.log(instanceKey);
+     console.log(instanceKey);
       // play safely
       try {
         current?.pause();
@@ -610,27 +620,32 @@ const [instanceKey, setInstanceKey] = useState(Math.random()*1000);
         } catch {}
       };
 
-    }, [player])
+    }, [code])
   );
 
   // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
 
   return (
+    <View key={`${code}-${ instanceKey}`} style={{flex: 1, backgroundColor: 'black'}}>
     
       <VideoView  
+      key={`${code}-${ instanceKey}`}
       style={styles_video.video} 
       player={player} 
-      allowsFullscreen allowsPictureInPicture />
+      allowsPictureInPicture />
      
+    </View>
   );
 }
 
 const styles_video = StyleSheet.create({
   contentContainer: {
    flex: 1,
+   backgroundColor: 'black',
     marginTop: Constants.statusBarHeight,
   },
   video: {
+   backgroundColor: 'black',
     width: '100%',
     height: '100%',
   },
