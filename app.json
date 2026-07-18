@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.deadlock0001.treex",
       "infoPlist": {
         "UIFileSharingEnabled": true,
-        "LSSupportsOpeningDocumentsInPlace": true
+        "LSSupportsOpeningDocumentsInPlace": true,
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "androidStatusBar": {
