@@ -14,6 +14,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import * as Clipboard from 'expo-clipboard';
+import { defaultDatabaseDirectory } from 'expo-sqlite';
 import { Storage } from 'expo-sqlite/kv-store';
 import axios from 'axios';
 import { Feather, Ionicons } from '@expo/vector-icons';
@@ -21,6 +23,17 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 const { width } = Dimensions.get('window');
 const POPUP_WIDTH = width * 0.75;
+const KV_STORE_DB_NAME = 'ExpoSQLiteStorage';
+
+const getKvStoreDbPath = () => {
+  if (!defaultDatabaseDirectory) {
+    return KV_STORE_DB_NAME;
+  }
+
+  const directory = defaultDatabaseDirectory.replace(/\/*$/, '');
+  const dbName = KV_STORE_DB_NAME.replace(/^\/+/, '');
+  return `${directory}/${dbName}`;
+};
 
 export default function LeftPane({isOpen, setIsOpen}) {
   const translateX = useSharedValue(-POPUP_WIDTH);
@@ -143,6 +156,12 @@ export default function LeftPane({isOpen, setIsOpen}) {
     Alert.alert('Profile', 'View your profile');
   };
 
+  const handleKvStorePath = async () => {
+    const path = getKvStoreDbPath();
+    await Clipboard.setStringAsync(path);
+    Alert.alert('KV Store DB Path', `${path}\n\nCopied to clipboard.`);
+  };
+
   const [size , setSize] = useState(0);
 
   useEffect(() => {
@@ -236,6 +255,16 @@ export default function LeftPane({isOpen, setIsOpen}) {
                   <Ionicons name="cloud-download-outline" size={24} color="black" />
                   <Text className="text-lg text-gray-700 ml-4 font-medium flex-1">
                     Update TFiles
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className="flex-row h-16 items-center p-4 rounded-xl mb-2 bg-gray-50"
+                  onPress={handleKvStorePath}
+                >
+                  <Ionicons name="copy-outline" size={24} color="black" />
+                  <Text className="text-lg text-gray-700 ml-4 font-medium flex-1">
+                    Copy KV DB Path
                   </Text>
                 </TouchableOpacity>
 

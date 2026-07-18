@@ -1,6 +1,7 @@
 // React and React Native
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import * as WebBrowser from 'expo-web-browser';
 import { useFocusEffect } from "expo-router";
 import { View, Text, ToastAndroid,Image, Dimensions, ScrollView, RefreshControl, StyleSheet, Pressable, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,6 +27,7 @@ import ImageView from 'react-native-image-viewing';
 import { StatusBar } from 'expo-status-bar';
 import { PlayList_Add } from '../../components/playlistAdd';
 import axios from 'axios';
+import WebView from 'react-native-webview';
 
 let { width, height } = Dimensions.get('window');
 
@@ -441,7 +443,8 @@ async function get_video_data(code){
           { (trailerData && trailerData[code]) ? <View>
           
           <View className="w-screen h-[220px] mt-2 px-3" > 
-            <VideoScreen videoSource={trailerData && trailerData[code] ? trailerData[code][0] : null}></VideoScreen> 
+            {/* <Text className='text-white'>fffff</Text> */}
+            <VideoScreen videoSource={trailerData && trailerData[code] ? trailerData[code][0] : null} data={data}></VideoScreen> 
           </View>
           </View> 
           : 
@@ -513,7 +516,10 @@ async function get_video_data(code){
               />
             )}
         </View>
-     
+            <View className='w-screen'>
+              {/* <Full_Video_Buttom code={code}></Full_Video_Buttom> */}
+            </View>
+          
         </ScrollView>
       </View>
     }
@@ -586,14 +592,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const VideoScreen = ({videoSource}) => {
+const VideoScreen = ({videoSource,data}) => {
   
 //  let player = useVideoPlayer(videoSource, p => {
 //     p.loop = true;
 //   });
+
  const { code } = useLocalSearchParams();
 const [instanceKey, setInstanceKey] = useState(Math.random()*1000);
-const player = useVideoPlayer(videoSource);
+const player = useVideoPlayer( "https://audinifer.com/stream/s5Bh3P_Y3tkQvVl1LCrbyw/kjhhiuahiuhgihdf/1772862228/66451905/master.m3u8");
   const playerRef = useRef(null);
 
   // always keep latest player
@@ -653,4 +660,23 @@ const styles_video = StyleSheet.create({
 export const unstable_settings = {
   unmountOnBlur: true,
 };
+
+const Full_Video_Buttom = ({code})=>{
+    const url = 'https://cdn-vhfrcgzcntzyhsiv.edgeon-bandwidth.com/engine/hls2/01/16099/khsey6igy9ia_,n,.urlset/master.m3u8?t=lvxNZs_GmMwnteTtcJogMtJRoHVQxpbxlEUnGjIhdKQ&s=1772816588&e=14400&f=80496729&node=Bmztnrr5rbXcEW2PaOWj8eFNTwbc5wmELh5Wh6vCkTE=&i=0.1&sp=2500&asn=55836&q=n&rq=vx18z5QTCZMIg4UPWx44mtX7FUj66Blulxw6HTeg'
+    const openUrl = async () => {
+    await WebBrowser.openBrowserAsync(
+      'https://example.com'
+    );
+  };
+    return (
+        <View className='w-screen h-screen px-6 py-3' >
+          <Text>Watch Full Video 📽️</Text>
+          <WebView
+  source={{ uri: url }}
+  allowsFullscreenVideo
+/>
+        </View>
+    )
+}
+
 export default Code;

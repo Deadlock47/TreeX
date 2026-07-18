@@ -46,7 +46,8 @@
       "expo-router",
       "expo-sqlite",
       "expo-font",
-      "expo-video"
+      "expo-video",
+      "expo-web-browser"
     ],
     "owner": "deadlock0001"
   }

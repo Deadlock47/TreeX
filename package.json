@@ -33,6 +33,7 @@
     "expo-updates": "~29.0.13",
     "expo-video": "~3.0.16",
     "expo-video-player": "^2.2.0",
+    "expo-web-browser": "~15.0.10",
     "nativewind": "^4.1.23",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -52,7 +53,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "baseline-browser-mapping": "^2.8.32"
+    "baseline-browser-mapping": "^2.10.42"
   },
   "private": true
 }

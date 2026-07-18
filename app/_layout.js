@@ -28,7 +28,7 @@ const _layout = () => {
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     })();
-    handleBiometricAuth();
+    // handleBiometricAuth();
   },[]);
 const handleBiometricAuth = async () => {
   try {
@@ -67,7 +67,7 @@ const handleBiometricAuth = async () => {
 
   return (
     <GestureHandlerRootView>
-   {   !isAuthSuccessfull ?
+   {   false ?
       (<View className='flex-1 w-screen h-screen bg-black' ></View>) 
       :
    ( 
