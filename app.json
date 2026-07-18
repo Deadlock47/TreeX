@@ -15,7 +15,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.deadlock0001.treex"
+      "bundleIdentifier": "com.deadlock0001.treex",
+      "infoPlist": {
+        "UIFileSharingEnabled": true,
+        "LSSupportsOpeningDocumentsInPlace": true
+      }
     },
     "androidStatusBar": {
       "hidden": true

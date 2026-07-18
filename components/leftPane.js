@@ -15,7 +15,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Clipboard from 'expo-clipboard';
-import { defaultDatabaseDirectory } from 'expo-sqlite';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
 import { Storage } from 'expo-sqlite/kv-store';
 import axios from 'axios';
 import { Feather, Ionicons } from '@expo/vector-icons';
@@ -24,16 +25,6 @@ import Entypo from '@expo/vector-icons/Entypo';
 const { width } = Dimensions.get('window');
 const POPUP_WIDTH = width * 0.75;
 const KV_STORE_DB_NAME = 'ExpoSQLiteStorage';
-
-const getKvStoreDbPath = () => {
-  if (!defaultDatabaseDirectory) {
-    return KV_STORE_DB_NAME;
-  }
-
-  const directory = defaultDatabaseDirectory.replace(/\/*$/, '');
-  const dbName = KV_STORE_DB_NAME.replace(/^\/+/, '');
-  return `${directory}/${dbName}`;
-};
 
 export default function LeftPane({isOpen, setIsOpen}) {
   const translateX = useSharedValue(-POPUP_WIDTH);
@@ -156,10 +147,47 @@ export default function LeftPane({isOpen, setIsOpen}) {
     Alert.alert('Profile', 'View your profile');
   };
 
-  const handleKvStorePath = async () => {
-    const path = getKvStoreDbPath();
-    await Clipboard.setStringAsync(path);
-    Alert.alert('KV Store DB Path', `${path}\n\nCopied to clipboard.`);
+  const handleKvStoreExport = async () => {
+    try {
+      if (!FileSystem.documentDirectory) {
+        Alert.alert('Export Failed', 'Document directory is not available on this device.');
+        return;
+      }
+
+      const sharingAvailable = await Sharing.isAvailableAsync();
+      if (!sharingAvailable) {
+        Alert.alert('Export Failed', 'Sharing is not available on this device.');
+        return;
+      }
+
+      const keys = await Storage.getAllKeys();
+      const entries = await Storage.multiGet(keys);
+      const data = Object.create(null);
+
+      entries.forEach(([key, value]) => {
+        data[key] = value;
+      });
+
+      const fileName = `kv-store-export-${Date.now()}.json`;
+      const exportData = {
+        exportedAt: new Date().toISOString(),
+        databaseName: KV_STORE_DB_NAME,
+        count: entries.length,
+        data,
+      };
+      const exportJson = JSON.stringify(exportData, null, 2);
+      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+
+      await FileSystem.writeAsStringAsync(fileUri, exportJson);
+      await Clipboard.setStringAsync(fileUri);
+      await Sharing.shareAsync(fileUri, {
+        mimeType: 'application/json',
+        UTI: 'public.json',
+        dialogTitle: 'Save KV Store Export',
+      });
+    } catch (error) {
+      Alert.alert('Export Failed', error?.message || 'Could not export KV store.');
+    }
   };
 
   const [size , setSize] = useState(0);
@@ -260,11 +288,11 @@ export default function LeftPane({isOpen, setIsOpen}) {
 
                 <TouchableOpacity
                   className="flex-row h-16 items-center p-4 rounded-xl mb-2 bg-gray-50"
-                  onPress={handleKvStorePath}
+                  onPress={handleKvStoreExport}
                 >
-                  <Ionicons name="copy-outline" size={24} color="black" />
+                  <Ionicons name="document-text-outline" size={24} color="black" />
                   <Text className="text-lg text-gray-700 ml-4 font-medium flex-1">
-                    Copy KV DB Path
+                    Export KV Store
                   </Text>
                 </TouchableOpacity>
 
