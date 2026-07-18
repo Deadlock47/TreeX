@@ -7,6 +7,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as SQLite from 'expo-sqlite';
 import Item from '../components/item';
 import { Storage } from 'expo-sqlite/kv-store';
+import { useScrollPressGuard } from '../components/useScrollPressGuard';
 
 const search = () => {
   const [status, setStatus] = useState('start');
@@ -20,6 +21,7 @@ const search = () => {
   const [searchPress, setSearchPress] = useState(false);
   const [bulkStatus,setBulkStatus] = useState(0);
   const [finalBulkValue,setFinalBulkValue] = useState("");
+  const { isScrolling, scrollPressGuardProps } = useScrollPressGuard();
 
   const pause = (milliseconds) => {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -117,9 +119,9 @@ const search = () => {
         { bulk &&
           <View className=' absolute top-32 flex gap-3  bg-black w-[calc(90%)] m-6 z-20 h-auto p-4 '  >
             <View className=' flex items-end w-fit' >
-              <View onTouchEnd={()=>setBulk(false)} className='w-fit h-fit' >
+              <Pressable onPress={()=>setBulk(false)} className='w-fit h-fit' >
                 <Text className='text-white w-fit text-3xl px-2 pb-1 rounded-md h-fit text-center bg-yellow-700' >x</Text>
-              </View>
+              </Pressable>
             </View>
             {
                bulkStatus === 0 ? 
@@ -142,7 +144,7 @@ const search = () => {
                  <ActivityIndicator size="large" color="#d1d5db" />
                </View>
             }
-            <Pressable className=' w-fit h-fit rounded-xl'  onTouchEnd={()=>{
+            <Pressable className=' w-fit h-fit rounded-xl'  onPress={()=>{
               if(bulkStatus === 0) // TextInput
               {
                 setBulkStatus(2);
@@ -169,7 +171,7 @@ const search = () => {
         <View className='p-2 px-6' >
         
         <Pressable
-            onTouchEnd={() => {
+            onPress={() => {
               // router.back();
               setBulk(true);
             }}
@@ -185,7 +187,7 @@ const search = () => {
         </View>
         {/* Search Results */}
         <View className="w-screen h-screen">
-          <ScrollView>
+          <ScrollView {...scrollPressGuardProps}>
             <View className='gap-4 w-screen mb-40 p-3 flex-row flex-wrap justify-start'>
               {
                 searchInput !== '' &&
@@ -195,7 +197,7 @@ const search = () => {
                     code_final = item.split("-").join("");
                     code_final = item.split(" ").join("");
                   }
-                  return item !== "" && <Item  code={code_final} key={key} thumb={false}></Item>
+                  return item !== "" && <Item  code={code_final} key={key} thumb={false} disabled={isScrolling}></Item>
                 })
               }
             </View>

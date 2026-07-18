@@ -8,6 +8,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Storage } from 'expo-sqlite/kv-store';
 import Item from '../../../components/item';
+import { useScrollPressGuard } from '../../../components/useScrollPressGuard';
 
 import { Nunito_400Regular } from '@expo-google-fonts/nunito';
 import { useFonts } from 'expo-font';
@@ -17,6 +18,7 @@ const index = () => {
   // console.log(typeof playlist);
   const [codes,setCodes] = useState([]);
   const [refreshing,setRefreshing] = useState(true);
+  const { isScrolling, scrollPressGuardProps, guardPress } = useScrollPressGuard();
 
    let [fontsLoaded] = useFonts({
         Nunito_400Regular
@@ -43,14 +45,17 @@ const index = () => {
     <SafeAreaProvider  >
       <SafeAreaView className='w-screen bg-neutral-900 h-full '  >
         <ScrollView className='w-screen p-2 h-full mb-20 '
+                      {...scrollPressGuardProps}
                       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={get_playlist_codes} ></RefreshControl>}
         
         >
         <View className='flex-row mt-2 mb-5 justify-between' >  
           <Pressable 
-              onTouchEnd={()=>{
+              disabled={isScrolling}
+              delayPressIn={80}
+              onPress={guardPress(()=>{
                 router.back();
-              }}
+              })}
               className='bg-yellow-500 ml-1 p-1  rounded-md ' >
             <Text className='' > 
                 <Ionicons name="chevron-back" size={30} color="black" />
@@ -60,7 +65,9 @@ const index = () => {
             <Text className='text-white -ml-6 text-3xl text-center font-bold ' style={{fontFamily: 'Nunito_700Bold', fontSize: 30}} adjustsFontSizeToFit={true} >{playlist}({codes.length-1})</Text>
           </View>
           <Pressable 
-              onTouchEnd={()=>{
+              disabled={isScrolling}
+              delayPressIn={80}
+              onPress={guardPress(()=>{
                 Alert.alert(
                   'Delete Playlist',
                   'Are you sure you want to delete this playlist?',
@@ -87,7 +94,7 @@ const index = () => {
                   }
                   ]
                 )
-              }}
+              })}
               className='bg-yellow-500 ml-1 p-1  rounded-md ' >
             <Text className='' > 
             <MaterialCommunityIcons name="delete" size={30} color="black" />
@@ -97,7 +104,7 @@ const index = () => {
       <View className='flex-row flex-wrap gap-3 justify-center items-center mb-32' >
             {
                 codes?.map((item,index)=> item !== "" &&
-                    <Item code={item} key={index} thumb={true} ></Item>
+                    <Item code={item} key={index} thumb={true} disabled={isScrolling} ></Item>
                 )   
             }
           

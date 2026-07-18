@@ -27,6 +27,7 @@ import { StatusBar } from 'expo-status-bar';
 
 // Icons
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useScrollPressGuard } from '../../../components/useScrollPressGuard';
 
 const Actress_Info = () => {
     const params = useLocalSearchParams();
@@ -40,6 +41,7 @@ const Actress_Info = () => {
     
     const [refreshing,setRefreshing] = useState(true);
     const [actress_codes ,setActress_codes] = useState();
+    const { isScrolling, scrollPressGuardProps, guardPress } = useScrollPressGuard();
     
     // const []
     
@@ -69,10 +71,12 @@ const Actress_Info = () => {
       <SafeAreaView className="w-screen h-full bg-neutral-900" >
         <View className='absolute top-7 z-10 left-7' >
           <Pressable 
-              onTouchEnd={()=>{ 
+              disabled={isScrolling}
+              delayPressIn={80}
+              onPress={guardPress(()=>{ 
                 router.back();
                 // console.log("btn - pressed")
-              }}
+              })}
               className='bg-yellow-500 p-1  rounded-md ' >
               <Text className='' > 
                   <Ionicons name="chevron-back" size={30} color="black" />
@@ -81,6 +85,7 @@ const Actress_Info = () => {
         </View>
         <ScrollView 
           className='w-screen h-auto  p-2  '
+          {...scrollPressGuardProps}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={get_codes} ></RefreshControl>}      
         >
         <View  className='w-screen h-fit p-10 flex gap-3 justify-center items-center  ' >
@@ -93,7 +98,7 @@ const Actress_Info = () => {
             {
                 actress_codes?.map((item,index)=>
                 
-                    <Item code={item} key={index} thumb={true} ></Item>
+                    <Item code={item} key={index} thumb={true} disabled={isScrolling} ></Item>
                 )   
             }
           

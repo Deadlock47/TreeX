@@ -2,10 +2,12 @@ import React, { useCallback, useRef, useMemo } from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useScrollPressGuard } from './useScrollPressGuard';
 
 const BtmDrawer = () => {
   // hooks
   const sheetRef = useRef(null);
+  const { scrollPressGuardProps } = useScrollPressGuard();
 
   // variables
   const data = useMemo(
@@ -50,7 +52,7 @@ const BtmDrawer = () => {
         enableDynamicSizing={false}
         onChange={handleSheetChange}
       >
-        <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
+        <BottomSheetScrollView {...scrollPressGuardProps} contentContainerStyle={styles.contentContainer}>
           {data.map(renderItem)}
         </BottomSheetScrollView>
       </BottomSheet>

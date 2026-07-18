@@ -9,12 +9,14 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFonts } from 'expo-font'
 import { Nunito_400Regular } from '@expo-google-fonts/nunito'
 import { Roboto_400Regular } from '@expo-google-fonts/roboto'
+import { useScrollPressGuard } from '../../../components/useScrollPressGuard'
 
 
 const Tag = () => {
   const {tag,tag_name} = useLocalSearchParams()
   const [tagCodes,setTagCodes] = useState([]);
   const [refreshing,setRefreshing] = useState(true);
+  const { isScrolling, scrollPressGuardProps, guardPress } = useScrollPressGuard();
  let [fontsLoaded] = useFonts({
       Roboto_400Regular,
       Nunito_400Regular
@@ -36,14 +38,17 @@ const Tag = () => {
       <SafeAreaView className='w-screen h-full bg-neutral-900' >
       <StatusBar style='light' ></StatusBar>
       <ScrollView className = "w-screen p-2 h-full mb-20 "
+              {...scrollPressGuardProps}
               refreshControl={<RefreshControl refreshing={refreshing} onRefresh={get_Tag_Codes} ></RefreshControl>}
           >  
           <View className='flex-row w-full  mt-2 mb-5 h-fit justify-between' >  
               <Pressable 
-                  onTouchEnd={()=>{
+                  disabled={isScrolling}
+                  delayPressIn={80}
+                  onPress={guardPress(()=>{
                     // router.replace('/tags');
                     router.back();
-                  }}
+                  })}
                   className='' >
                     <View
                       className='bg-yellow-500 w-fit h-fit ml-1 p-1  rounded-md '
@@ -68,7 +73,7 @@ const Tag = () => {
                 </View>
       
                 {
-                  tagCodes.map((item)=>item !== "" && <Item code={item} key={item} ></Item>)
+                  tagCodes.map((item)=>item !== "" && <Item code={item} key={item} disabled={isScrolling} ></Item>)
                 }
                 
           </ScrollView>

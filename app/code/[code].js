@@ -28,6 +28,7 @@ import { StatusBar } from 'expo-status-bar';
 import { PlayList_Add } from '../../components/playlistAdd';
 import axios from 'axios';
 import WebView from 'react-native-webview';
+import { useScrollPressGuard } from '../../components/useScrollPressGuard';
 
 let { width, height } = Dimensions.get('window');
 
@@ -52,6 +53,16 @@ const Code = () => {
   const [playlists, setPlaylists] = useState([]);
   const [trailerData, setTrailerData] = useState({});
   const [loading,setLoading] = useState(false);
+  const { isScrolling, scrollPressGuardProps, guardPress } = useScrollPressGuard();
+  const {
+    isScrolling: isPlaylistScrolling,
+    scrollPressGuardProps: playlistScrollPressGuardProps,
+    guardPress: guardPlaylistPress,
+  } = useScrollPressGuard();
+  const {
+    isScrolling: isActressScrolling,
+    scrollPressGuardProps: actressScrollPressGuardProps,
+  } = useScrollPressGuard();
 
   const handleClosePress = () => bottomSheetRef.current?.close();
   const handleOpenPress = () => bottomSheetRef.current?.expand();
@@ -130,7 +141,7 @@ async function get_data_vid(c){
     
     const temp = c;
     // // console.log(temp)
-    const url = `https://r18.dev/videos/vod/movies/detail/-/combined=${temp}/json`;
+    const url = `http://127.0.0.1:8765/api/videos/details?dvd_id=${temp}`;
     // // console.log(url)
     const result = await axios.get(url);
     // // // console.log(result)
@@ -279,30 +290,33 @@ async function get_video_data(code){
         <View className={`${showPlaylistBox ? "" :'hidden'} absolute z-30 w-[calc(90%)] rounded-lg h-[calc(80%)] bg-neutral-800`} >
           <View className='flex-row p-4 justify-between' >
             <Text className='text-white' style={{fontFamily: 'Nunito_700Bold', fontSize: 26}} >Playlist</Text>
-            <Pressable onTouchEnd={()=>setShowPlaylistBox(!showPlaylistBox)} className="rounded-xl bg-yellow-500 p-2  mb-3">
+            <Pressable onPress={()=>setShowPlaylistBox(!showPlaylistBox)} className="rounded-xl bg-yellow-500 p-2  mb-3">
               <Text className="text-center text-white">
                 <Entypo name="cross" size={26} color="white" />
               </Text>
             </Pressable>
           </View>
           <PlayList_Add playlistFunc={set_Playlist}></PlayList_Add>
-          <ScrollView>
+          <ScrollView {...playlistScrollPressGuardProps}>
             <View className="flex gap-4 mt-3">
-              {playlists?.map((item, index) => item !== '' && <Playlist_Item item={item} key={index} code={code}></Playlist_Item>)}
+              {playlists?.map((item, index) => item !== '' && <Playlist_Item item={item} key={index} code={code} disabled={isPlaylistScrolling} guardPress={guardPlaylistPress}></Playlist_Item>)}
             </View>
           </ScrollView>
         </View>
       <ScrollView
+        {...scrollPressGuardProps}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={()=>get_data(code,true)} />}
         className="w-screen h-fit"
       >
       
         <View className="absolute flex-row justify-between  w-screen px-4  z-10">
           <Pressable
-            onTouchEnd={() => {
+            disabled={isScrolling}
+            delayPressIn={80}
+            onPress={guardPress(() => {
               router.dismissTo('/');
               router.navigate('/');
-            }}
+            })}
             className="top-10  rounded-md"
           >
             <View className='bg-[#d4960781] h-fit p-1  ' >
@@ -313,10 +327,12 @@ async function get_video_data(code){
             </View>
           </Pressable>
           <Pressable
-            onTouchEnd = {()=>{
+            disabled={isScrolling}
+            delayPressIn={80}
+            onPress = {guardPress(()=>{
               set_Favs(code)
               // // // console.log("set_favs")
-            }}
+            })}
             className="bg-yellow-500 flex justify-center items-center p-2 top-[calc(240px)] rounded-full"
           >
             <View className=''>
@@ -332,12 +348,12 @@ async function get_video_data(code){
         </View>
       {/* <StatusBar ></StatusBar> */}
         <View className="w-fit h-fit">
-          <Image className="" width={'auto'} height={260} contentFit="contain" source={{ uri: data?.poster }}></Image>
+          <Image className="" width={'auto'} height={280} contentFit="contain" source={{ uri: data?.poster }}></Image>
           <LinearGradient
             colors={['transparent', 'rgba(23, 23, 23, 0.7)', 'rgba(23, 23, 23, 1)']}
             style={{
               width,
-              height: height * 0.1,
+              height: height * 0.03,
             }}
             start={{
               x: 0.5,
@@ -386,7 +402,7 @@ async function get_video_data(code){
           </View>
         </View>
         <View className="px-5 mt-4">
-          <Pressable className="p-3 bg-yellow-700 rounded-xl" onTouchEnd={()=>setShowPlaylistBox(!showPlaylistBox)}>
+          <Pressable className="p-3 bg-yellow-700 rounded-xl" disabled={isScrolling} delayPressIn={80} onPress={guardPress(()=>setShowPlaylistBox(!showPlaylistBox))}>
             <Text className="text-white text-center">Add to Playlist</Text>
           </Pressable>
         </View>
@@ -398,9 +414,11 @@ async function get_video_data(code){
             {data?.tags?.map((tag, key) => {
               return (
                 <Pressable
-                  onTouchEnd={() => {
+                  disabled={isScrolling}
+                  delayPressIn={80}
+                  onPress={guardPress(() => {
                     router.push({ pathname: `/code/tag/${tag.tag_id}`, params: { tag_name: tag.name } });
-                  }}
+                  })}
                   key={tag.tag_id}
                 >
                   <Text className="w-fit bg-yellow-700 p-2 h-fit pt-2.5 pb-2.5 text-neutral-200" key={tag.tag_id}>
@@ -414,12 +432,14 @@ async function get_video_data(code){
         {data?.actress && (
           <View className="w-screen h-fit p-3">
             <Text className="text-neutral-300 text-xl p-2">Actress:</Text>
-            <ScrollView horizontal className="w-screen h-auto flex-row gap-6 p-2">
+            <ScrollView horizontal className="w-screen h-auto flex-row gap-6 p-2" {...actressScrollPressGuardProps}>
               {data?.actress?.length > 0 &&
                 data?.actress?.map((item, key) => (
                   <View key={key} className="w-fit h-full ml-4">
                     <Pressable
-                      onTouchEnd={() => {
+                      disabled={isScrolling || isActressScrolling}
+                      delayPressIn={80}
+                      onPress={() => {
                         router.push({ pathname: `/code/actress/${item.id}`, params: { image: item.image, name: item.name } });
                       }}
                       className="w-fit h-fit"
@@ -460,13 +480,15 @@ async function get_video_data(code){
             {data?.screenshots &&
               data.screenshots.map((item, index) => (
                 <Pressable
-                  onTouchStart={ () => {
+                  disabled={isScrolling}
+                  delayPressIn={80}
+                  onPress={guardPress(() => {
                     let idx = index
                     setImageIdx(index);
                     setCurrentIndex(index);
                     setVisible(true);
                     // // console.log(idx ,imageIdx,currentIndex);
-                  }}
+                  })}
                   key={index}
                   className="bg-yellow-400"
                 >
@@ -496,14 +518,16 @@ async function get_video_data(code){
               HeaderComponent={(index) => {
                 // console.log(index)
                 return (
-                  <View className="h-16 bg-transparent w-full flex-row items-center justify-center">
-                    <View className="w-fit mt-1">
+                  <View className=" bg-red-300 h-full top-10 w-screen mt-5  flex-row items-center justify-between">
+                    <View></View>
+                    <View className="w-fit  mt-1">
                       <Text className="text-white text-center" style={styles.text}>{`${index.imageIndex + 1 } / ${
                         data?.screenshots ? data.screenshots.length : 0
                       }`}</Text>
                     </View>
-                    <Pressable onTouchEndCapture={()=> {setVisible(false)}} className="absolute right-1 rounded-full top-5 p-2 text-2xl font-extrabold bg-white  ">
-                      <Text style={{ color: 'black' }}>x</Text>
+                      
+                    <Pressable onPress={()=> {setVisible(false)}} className="  flex-row items-center  rounded-full  font-extrabold   ">
+                      <Text className = "text-xl pl-2" style={{ color: 'black' }}></Text>
                     </Pressable>
                   </View>
                 );
@@ -530,7 +554,7 @@ async function get_video_data(code){
 
 
 
-const Playlist_Item = ({ item, code }) => {
+const Playlist_Item = ({ item, code, disabled = false, guardPress = (handler) => handler }) => {
   const [check, setCheck] = useState(false);
   // // console.log(item);
   async function checkData() {
@@ -561,13 +585,15 @@ const Playlist_Item = ({ item, code }) => {
 });
   return (
     <Pressable
-      onTouchEnd={() => {
+      disabled={disabled}
+      delayPressIn={80}
+      onPress={guardPress(() => {
         if (!check) {
           addData(item, code);
         } else {
           Alert.alert('Playlist already added');
         }
-      }}
+      })}
       className="w-auto mx-5 p-3 bg-neutral-900 rounded-lg"
     >
       <View className="flex-row items-center gap-2">

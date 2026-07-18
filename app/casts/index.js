@@ -6,6 +6,7 @@ import { Storage } from 'expo-sqlite/kv-store';
 import { Nunito_400Regular, useFonts } from '@expo-google-fonts/nunito';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { useScrollPressGuard } from '../../components/useScrollPressGuard';
 
 let { width, height } = Dimensions.get('window');
 
@@ -19,6 +20,7 @@ const index = () => {
 
   const [refreshing,setRefreshing] = useState(true);
   const [actress_list,setActress_list] = useState([]);
+  const { isScrolling, scrollPressGuardProps, guardPress } = useScrollPressGuard();
 
   async function get_Actress_list(){
     const result = await Storage.getItem("actress_list")
@@ -55,6 +57,7 @@ const index = () => {
       actress_list.length > 0 && 
       <ScrollView
         className='p-5 w-full h-auto mb-safe-or-16  bg-neutral-900   '
+        {...scrollPressGuardProps}
         
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={get_Actress_list} />
@@ -63,7 +66,7 @@ const index = () => {
         <View className='flex-row flex-wrap gap-2 mb-10 justify-start items-center'>
 
         {
-          actress_list.map((item,index)=><Actress_Item key={index} item={item} ></Actress_Item>)
+          actress_list.map((item,index)=><Actress_Item key={index} item={item} disabled={isScrolling} guardPress={guardPress} ></Actress_Item>)
         }
         </View>
       </ScrollView>
@@ -75,6 +78,7 @@ const index = () => {
 
 const Actress_Item= (props)=>{
   const txt = props.item;
+  const { disabled, guardPress } = props;
   const [data,setData] = useState();
 
   let [fontsLoaded] = useFonts({
@@ -94,9 +98,11 @@ const Actress_Item= (props)=>{
   return (
     
     <Pressable 
-        onTouchEnd={()=>{
+        disabled={disabled}
+        delayPressIn={80}
+        onPress={guardPress(()=>{
           router.push({pathname : `/casts/${txt}`,params :{image : data.image , name : data.name}})
-        }}
+        })}
         className=' p-1 flex '
         width={width * 0.29}
         height = {height * 0.19}

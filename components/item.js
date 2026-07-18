@@ -17,7 +17,7 @@ import { Nunito_400Regular, Nunito_700Bold } from '@expo-google-fonts/nunito';
 import axios from 'axios';
 import get_data from './data_fetch';
 
-const Item = ({code,thumb}) => {
+const Item = ({code,thumb,disabled = false}) => {
     const code_vid = code;
     // const thumb = thumb;
     // console.log(code_vid)
@@ -39,6 +39,10 @@ const Item = ({code,thumb}) => {
     const [noresult , setNoresult] = useState(false);
 
     const lowerCode = code_final.toLowerCase();
+    const pressRetentionOffset = { top: 8, left: 8, right: 8, bottom: 8 };
+    const openCode = () => {
+        router.push(`/code/${code}`);
+    };
 
 async function set_data(tag_code,_code)
 {
@@ -270,7 +274,13 @@ async function store_each_tag(newTags) {
                             <Text style={{'color':'white'}} numberOfLines={2} className="p-1 font-bold ">NA : {code}</Text>
                         </View>
                         : 
-                        <View className='flex flex-row' onTouchEnd={()=>{  router.push(`/code/${code}`) }}>
+                        <Pressable
+                            className='flex flex-row'
+                            disabled={disabled}
+                            delayPressIn={80}
+                            pressRetentionOffset={pressRetentionOffset}
+                            onPress={openCode}
+                        >
                             <View className="w-[calc(30%)] h-fit rounded-t-xl overflow-hidden">
                                 <Image className="  "  width={'auto'} height={150} resizeMode='contain' source={{uri : data?.poster_thumb }} ></Image>
                             </View>
@@ -279,7 +289,7 @@ async function store_each_tag(newTags) {
                                 <Text style={{fontFamily: 'Roboto_400Regular', fontSize: 14,'color':'white'}} numberOfLines={3} className="p-1 ">{data?.title?.length ? data?.title : "No Title" }</Text>
                                 <Text style={{fontFamily: 'Nunito_400Regular', fontSize: 14,'color':'white'}} className="p-1 underline ">{data?.details?.studio}</Text>
                             </View>
-                        </View>
+                        </Pressable>
                      }   
                     </View>
                 )
@@ -298,14 +308,14 @@ async function store_each_tag(newTags) {
                             
                         >
                             <Text className='text-white bg-yellow-500 p-1 rounded-md ' 
-                            onTouchEnd={
+                            onPress={
                                 ()=>{
                                     get_video_data(lowerCode,true);
                                 }
                             }
                             >Reload</Text>
                             <Text className='text-white  bg-yellow-500 p-1 rounded-md ' 
-                            onTouchEnd={
+                            onPress={
                                 ()=>{
                                     remove_code_from_list(code);
                                     ToastAndroid.show('Code Removed', ToastAndroid.SHORT);
@@ -319,16 +329,22 @@ async function store_each_tag(newTags) {
                     </View>
                 ):
                 (
-                    <View onTouchEnd={()=>{  router.push(`/code/${code}`) }} className="w-fit rounded-t-xl overflow-hidden h-fit  " >
+                    <Pressable
+                        disabled={disabled}
+                        delayPressIn={80}
+                        pressRetentionOffset={pressRetentionOffset}
+                        onPress={openCode}
+                        className="w-fit rounded-t-xl overflow-hidden h-fit  "
+                    >
         
-                        <Image className=" rounded-t-xl " width={'auto'} height={248} resizeMode='contain' source={{uri : data?.poster}} ></Image>
+                        <Image className=" rounded-t-xl " width={'auto'} height={255} resizeMode='contain' source={{uri : data?.poster}} ></Image>
                         <Text numberOfLines={2} style={{fontFamily: 'Nunito_700Bold',color:'white'}} className="p-2 pb-0">
                             {code}
                             <Text numberOfLines={2} style={{fontFamily: 'Roboto_400Regular','color':'white'}} className="p-3"> | {data?.title?.length && data?.title }</Text>
                         </Text>
 
                         
-                    </View>
+                    </Pressable>
                 )
                 )
             }

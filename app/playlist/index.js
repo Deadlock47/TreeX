@@ -1,5 +1,5 @@
 // React and React Native
-import { View, Text, TextInput, TouchableOpacity, ScrollView, RefreshControl, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, RefreshControl, Image, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 
 // Expo Router
@@ -23,6 +23,7 @@ import { playlist_image } from './data_img';
 
 // Safe Area
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useScrollPressGuard } from '../../components/useScrollPressGuard';
 
 const index = () => {
     let [fontsLoaded] = useFonts({
@@ -35,6 +36,7 @@ const index = () => {
     const [searchInput , setSearchInput] = useState("");
     const [playlists ,setPlaylists] = useState([]);
     const [refreshing,setRefreshing] = useState(true)
+    const { isScrolling, scrollPressGuardProps, guardPress } = useScrollPressGuard();
     
     async function get_list()
     {
@@ -98,6 +100,7 @@ const index = () => {
               </TouchableOpacity>
         </View>
         <ScrollView className='w-screen h-auto   p-2 '
+          {...scrollPressGuardProps}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={get_list} ></RefreshControl>}
           
         >
@@ -105,7 +108,7 @@ const index = () => {
 
 
             {
-              playlists?.map((item,key)=> item!=="" && <Playlist_Item item={item} key={key} ></Playlist_Item>
+              playlists?.map((item,key)=> item!=="" && <Playlist_Item item={item} key={key} disabled={isScrolling} guardPress={guardPress} ></Playlist_Item>
               )
             }
           </View>
@@ -114,7 +117,7 @@ const index = () => {
   )
 }
 
-const Playlist_Item = ({item})=>{
+const Playlist_Item = ({item, disabled, guardPress})=>{
 
   const [isImage , setIsImage] = useState("");
   async function getImage() {
@@ -135,10 +138,12 @@ const Playlist_Item = ({item})=>{
     Nunito_700Bold
   });
   return (
-    <View 
-      onTouchEnd={()=>{
+    <Pressable 
+      disabled={disabled}
+      delayPressIn={80}
+      onPress={guardPress(()=>{
         router.push(`/playlist/${item}`)
-      }}
+      })}
     className='w-[calc(45%)] rounded-xl   bg-neutral-700 overflow-hidden h-32 flex justify-center items-center ' >
         {
           isImage ? 
@@ -152,7 +157,7 @@ const Playlist_Item = ({item})=>{
         >
           {item}
         </Text>
-    </View>
+    </Pressable>
   )
 }
 

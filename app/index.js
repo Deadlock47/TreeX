@@ -1,5 +1,5 @@
 
-import { View, Text, ScrollView, FlatList,Image, Switch, RefreshControl,Dimensions, Alert, ToastAndroid } from 'react-native';
+import { View, Text, ScrollView, FlatList,Image, Switch, RefreshControl,Dimensions, Alert, ToastAndroid, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, router } from 'expo-router';
 import { Storage } from 'expo-sqlite/kv-store';
@@ -9,6 +9,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from '@expo/vector-icons/Entypo';
 import Feather from '@expo/vector-icons/Feather';
 import LeftPane from '../components/leftPane';
+import { useScrollPressGuard } from '../components/useScrollPressGuard';
 
 // import Entypo from '@expo/vector-icons/Entypo';
 import * as LocalAuthentication from 'expo-local-authentication';
@@ -26,6 +27,7 @@ const index = () => {
     const [refreshing,setRefreshing] = useState(true);
     const [isSwitchEnabled, setIsSwitchEnabled] = useState(false);
     const [isThumbT, setIsThumbT] = useState(false);
+    const { isScrolling, scrollPressGuardProps } = useScrollPressGuard();
     // async function refresh_data()
     // {
     //   const result = await Storage.getItem("code_list");
@@ -57,11 +59,11 @@ const index = () => {
       get_jav_lists();
     },[])
   return (
-     <SafeAreaProvider className='h-screen mt-10 bg-neutral-700'>
-      <View className=" pt-10 bg-neutral-900 w-screen h-full" >
+     <SafeAreaProvider className='h-full  bg-neutral-900'>
+      <View className="  bg-neutral-900 h-auto w-screen " >
           <StatusBar hidden={true} translucent={true} ></StatusBar>
           <LeftPane isOpen={isOpen} setIsOpen={setIsOpen} ></LeftPane>
-          <View className="flex-row items-center justify-between mb-1  pt-4 px-3   " >
+          <View className="flex-row mt-10 justify-between mb-1  pt-4 px-5   " >
             <Entypo onPress={()=>{
        
                 // Alert.alert("Refresh","Are you sure you want to refresh the data?",
@@ -108,13 +110,17 @@ const index = () => {
                 <View className='mb-10' ></View>
           </ScrollView> */}
          <FlatList
+
+  {...scrollPressGuardProps}
   data={jav_list.filter(item => item !== "")}
   keyExtractor={(item, index) => index.toString()}
   renderItem={({ item }) => (
     <Item
       code={item}
       thumb={isThumbT}
+      disabled={isScrolling}
     />
+    // <Item code={"DASS-556"} ></Item>
   )}
   refreshControl={
     <RefreshControl
@@ -128,15 +134,15 @@ const index = () => {
   }}
   showsVerticalScrollIndicator={false}
 />
-
+{/* <Item code={"DASS-556"} ></Item> */}
       </View>
-      <View className='absolute z-30 bottom-20 right-6 w-16 h-16 p-3 rounded-full bg-[#232121c9] flex-row items-center justify-center'
-          onTouchEnd={()=>{
+      {/* <Pressable className='absolute z-30 bottom-20 right-6 w-16 h-16 p-3 rounded-full bg-[#232121c9] flex-row items-center justify-center'
+          onPress={()=>{
             router.push("/jveel")
           }}
       >
         <Entypo name="video" size={24} color="white" />
-      </View>
+      </Pressable> */}
        {/* <View className='absolute bottom-0 w-screen h-16 bg-neutral-900 flex-row items-center justify-center' >
         <Text className='text-neutral-300' >Made with ❤️ by Jveel</Text>
       </View> */}

@@ -15,6 +15,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Clipboard from 'expo-clipboard';
+import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { Storage } from 'expo-sqlite/kv-store';
@@ -26,8 +27,74 @@ const { width } = Dimensions.get('window');
 const POPUP_WIDTH = width * 0.75;
 const KV_STORE_DB_NAME = 'ExpoSQLiteStorage';
 
+const splitCsvValue = (value) =>
+  value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+const combineUnique = (currentItems, importItems) => [
+  ...new Set([...currentItems, ...importItems]),
+];
+
+const tryParseJson = (value) => {
+  if (typeof value !== 'string') {
+    return { parsed: false, value };
+  }
+
+  try {
+    return { parsed: true, value: JSON.parse(value) };
+  } catch {
+    return { parsed: false, value };
+  }
+};
+
+const mergeKvValue = (currentValue, importValue) => {
+  const normalizedImportValue =
+    typeof importValue === 'string' ? importValue : JSON.stringify(importValue);
+
+  if (!currentValue) {
+    return normalizedImportValue;
+  }
+
+  if (!normalizedImportValue) {
+    return currentValue;
+  }
+
+  const currentJson = tryParseJson(currentValue);
+  const importJson = tryParseJson(normalizedImportValue);
+
+  if (currentJson.parsed && importJson.parsed) {
+    if (Array.isArray(currentJson.value) && Array.isArray(importJson.value)) {
+      return JSON.stringify(combineUnique(currentJson.value, importJson.value));
+    }
+
+    if (
+      currentJson.value &&
+      importJson.value &&
+      typeof currentJson.value === 'object' &&
+      typeof importJson.value === 'object' &&
+      !Array.isArray(currentJson.value) &&
+      !Array.isArray(importJson.value)
+    ) {
+      return JSON.stringify({ ...currentJson.value, ...importJson.value });
+    }
+  }
+
+  return combineUnique(
+    splitCsvValue(currentValue),
+    splitCsvValue(normalizedImportValue),
+  ).join(',');
+};
+
 export default function LeftPane({isOpen, setIsOpen}) {
   const translateX = useSharedValue(-POPUP_WIDTH);
+  const [size , setSize] = useState(0);
+
+  const refreshCollectionSize = async () => {
+    const result = await Storage.getItem("code_list");
+    setSize(result ? splitCsvValue(result).length : 0);
+  };
 
   const togglePopup = () => {
     if (!isOpen) {
@@ -190,14 +257,72 @@ export default function LeftPane({isOpen, setIsOpen}) {
     }
   };
 
-  const [size , setSize] = useState(0);
+  const handleKvStoreImport = async () => {
+    try {
+      const pickerResult = await DocumentPicker.getDocumentAsync({
+        type: ['application/json', 'text/json', 'text/plain'],
+        copyToCacheDirectory: true,
+        multiple: false,
+      });
+
+      if (pickerResult.canceled) {
+        return;
+      }
+
+      const file = pickerResult.assets?.[0];
+      if (!file?.uri) {
+        Alert.alert('Import Failed', 'No JSON file was selected.');
+        return;
+      }
+
+      const fileContents = await FileSystem.readAsStringAsync(file.uri);
+      const parsedFile = JSON.parse(fileContents);
+      const importData = parsedFile?.data;
+
+      if (!importData || Array.isArray(importData) || typeof importData !== 'object') {
+        Alert.alert(
+          'Import Failed',
+          'Selected file does not match the KV store export format.',
+        );
+        return;
+      }
+
+      const keys = Object.keys(importData);
+      let insertedCount = 0;
+      let appendedCount = 0;
+
+      for (const key of keys) {
+        const currentValue = await Storage.getItem(key);
+        const nextValue =
+          currentValue === null || currentValue === undefined
+            ? typeof importData[key] === 'string'
+              ? importData[key]
+              : JSON.stringify(importData[key])
+            : mergeKvValue(currentValue, importData[key]);
+
+        await Storage.setItem(key, nextValue);
+
+        if (currentValue === null || currentValue === undefined) {
+          insertedCount += 1;
+        } else {
+          appendedCount += 1;
+        }
+      }
+
+      await refreshCollectionSize();
+
+      ToastAndroid.show('KV Store imported', ToastAndroid.SHORT);
+      Alert.alert(
+        'Import Complete',
+        `Inserted keys: ${insertedCount}\nAppended keys: ${appendedCount}`,
+      );
+    } catch (error) {
+      Alert.alert('Import Failed', error?.message || 'Could not import KV store.');
+    }
+  };
 
   useEffect(() => {
-    const fetchSize = async () => {
-      const result = await Storage.getItem("code_list");
-      setSize(result ? result.split(",").length : 0);
-    };
-    fetchSize();
+    refreshCollectionSize();
   }, []);
 
   return (
@@ -293,6 +418,16 @@ export default function LeftPane({isOpen, setIsOpen}) {
                   <Ionicons name="document-text-outline" size={24} color="black" />
                   <Text className="text-lg text-gray-700 ml-4 font-medium flex-1">
                     Export KV Store
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className="flex-row h-16 items-center p-4 rounded-xl mb-2 bg-gray-50"
+                  onPress={handleKvStoreImport}
+                >
+                  <Ionicons name="document-attach-outline" size={24} color="black" />
+                  <Text className="text-lg text-gray-700 ml-4 font-medium flex-1">
+                    Import KV Store
                   </Text>
                 </TouchableOpacity>
 

@@ -3,11 +3,13 @@ import { View, Text, FlatList, Dimensions } from 'react-native'
 import { VideoView, useVideoPlayer } from 'expo-video'
 import { useIsFocused } from '@react-navigation/native'
 import VideoScreen from '../../components/video_box'
+import { useScrollPressGuard } from '../../components/useScrollPressGuard'
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window')
 
 const Index = () => {
   const isFocused = useIsFocused()
+  const { scrollPressGuardProps } = useScrollPressGuard()
 
   const [reels, setReels] = useState([
     { id: 1, uri: 'https://www.w3schools.com/html/mov_bbb.mp4' },
@@ -81,6 +83,7 @@ const Index = () => {
 
   return (
     <FlatList
+      {...scrollPressGuardProps}
       data={reels}
       renderItem={renderItem}
       keyExtractor={(item) => item.id.toString()}

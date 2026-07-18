@@ -101,7 +101,7 @@ const search = () => {
                  <ActivityIndicator size="large" color="#d1d5db" />
                </View>
             }
-            <Pressable className=' w-fit h-fit rounded-xl'  onTouchEnd={()=>{
+            <Pressable className=' w-fit h-fit rounded-xl'  onPress={()=>{
               if(bulkStatus === 0) // TextInput
               {
                 setBulkStatus(2);

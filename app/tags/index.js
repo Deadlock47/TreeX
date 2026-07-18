@@ -19,6 +19,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 // Status Bar
 import { StatusBar } from 'expo-status-bar';
+import { useScrollPressGuard } from '../../components/useScrollPressGuard';
 
 const index = () => {
 
@@ -31,6 +32,7 @@ const index = () => {
   const [tags,setTags] = useState([]);
   const [refreshing,setRefreshing] = useState(true);
   const [tagSections, setTagSections] = useState([]);
+  const { isScrolling, scrollPressGuardProps, guardPress } = useScrollPressGuard();
 
 
   function groupTagsByFirstLetter(tags) {
@@ -94,6 +96,7 @@ const fetchTags = async () => {
         </View>
        
         <ScrollView className='mb-24'
+                        {...scrollPressGuardProps}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchTags} ></RefreshControl>}
           
         >
@@ -113,7 +116,13 @@ const fetchTags = async () => {
         {data.data.map(tag => {
           
           return (
-          <Pressable onTouchEnd={()=>{ router.push({pathname : `/tags/${tag.tag_id}`,params : {tag_name : tag.name}}) }} key={tag.tag_id} className='' >
+          <Pressable
+            disabled={isScrolling}
+            delayPressIn={80}
+            onPress={guardPress(()=>{ router.push({pathname : `/tags/${tag.tag_id}`,params : {tag_name : tag.name}}) })}
+            key={tag.tag_id}
+            className=''
+          >
             <Text className='w-fit bg-yellow-700 p-2 h-fit pt-2.5 pb-2.5 text-neutral-200 ' key={tag.tag_id}>{tag.name}</Text>
           </Pressable>
           )
