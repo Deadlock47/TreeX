@@ -1,11 +1,11 @@
 name: Build TreeX iOS
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
-      - 
+
+  workflow_dispatch:
 
 jobs:
   build-ios:
@@ -27,21 +27,16 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Generate native iOS project
+      - name: Generate iOS project
         run: npx expo prebuild --platform ios --non-interactive
-        env:
-          BIN_ID: ${{ secrets.BIN_ID }}
 
-      - name: Build iOS locally
+      - name: Build iOS
         run: eas build --platform ios --local --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          BIN_ID: ${{ secrets.BIN_ID }}
 
       - name: Find IPA
-        run: |
-          echo "Searching for IPA..."
-          find . -name "*.ipa" -print
+        run: find . -name "*.ipa" -print
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
